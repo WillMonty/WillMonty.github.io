@@ -12,18 +12,6 @@ iframe
     height: 465px;
 }
 
-#mainText
-{
-    font-size: 1.8em;
-}
-
-#docText
-{
-    font-size: 14pt;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
 @media only screen and (min-width: 300px) and (max-width: 768px)
 {
     #title

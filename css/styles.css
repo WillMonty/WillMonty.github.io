@@ -108,9 +108,11 @@
     font-weight: bold;
 }
 
-#mainText
+.mainText
 {
     font-size: 1.8em;
+	padding-left: 1em;
+    padding-right: 1em;
 }
 
 a

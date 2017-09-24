@@ -17,13 +17,11 @@ video
     height: 25em;
 }
 
-#mainText
+.mainText
 {
-    padding-left: 1em;
-    padding-right: 1em;
     margin-top: 2em;
-    width: 60%;
 }
+
 
 @media only screen and (min-width: 300px) and (max-width: 750px)
 {

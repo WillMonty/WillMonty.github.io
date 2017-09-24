@@ -1,0 +1,40 @@
+.listHeader
+{
+    font-size: 1.7em;
+    padding-left: 1em;
+}
+
+.listBody
+{
+    font-size: 1.3em;
+}
+
+.listBody > li
+{
+    margin-bottom: 0.3em;
+    width: 50%;
+}
+
+@media only screen and (min-width: 300px) and (max-width: 750px)
+{
+    
+    .listHeader
+    {
+        font-size: 1.4em;
+    }
+    
+    .listBody
+    {
+        font-size: 1em;
+    }
+    
+    .listBody > li
+    {
+        width: 95%;
+    }
+}
+
+@media only screen and (min-width: 751px) and (max-width: 1200px)
+{
+    
+}

@@ -1,0 +1,123 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="William Montgomery Portfolio Website">
+<meta name="keywords" content="William Montgomery, Game Development, Music Vizualization">
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="bootstrap/js/bootstrap.js"></script>
+<script src="js/typed.js"></script>
+    
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+<link rel="stylesheet" type="text/css" href="css/indexStyle.css">
+
+</head>
+    
+<body>
+    
+    <nav class="navbar">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navCollapse" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html"></a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navCollapse">
+          <ul class="nav navbar-nav">
+            <li><a href="visualizerproject.html">Visualizer Project<span class="sr-only">(current)</span></a></li>
+            <li><a href="visualizergallery.html">Visualizer Gallery</a></li>
+            <li><a href="asteroids.html">Asteroids</a></li>
+            <li><a href="media/William%20G%20Montgomery%20Resum%C3%A9.pdf">Resume</a></li>  
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <main>
+        
+        <div class="centerWrap container-fluid">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <img id="profilePic" src="media/profilepic.JPG" alt="A picture of me" class="img-thumbnail">
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <span class="hi">Hi</span>
+                    <span class="hi" id="hiUnder">_</span>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div id="introContainer">
+            <p id="intro">My name is William Montgomery and these are my projects.</p>
+        </div>
+        
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-4 col-xs-6 projColumn">
+                    <div class="hoverGif" id="visProj" onclick="parent.location = 'visualizerproject.html'"></div>
+                </div>
+                <div class="col-sm-4 col-xs-6 projColumn">
+                    <div class="hoverGif" id="otherVis"
+                    onclick="parent.location = 'visualizergallery.html'"></div>
+                </div>
+                <div class="col-sm-4 col-xs-12 projColumn">
+                    <div class="hoverGif" id="asteroids"
+                    onclick="parent.location = 'asteroids.html'"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+<script type="text/javascript">
+$(document).ready(function() 
+{
+    showUnder();
+    $("#intro").typed({
+        strings: ["My name is William Montgomery and these are my projects."],
+        typeSpeed: 0
+    });
+});
+    
+function showUnder()
+{
+    
+    $("#hiUnder").animate(
+    {
+      opacity: 1
+    },
+    750,
+    function()
+    {
+        hideUnder();           
+    }
+   
+  );      
+}
+    
+function hideUnder()
+{
+    
+    $("#hiUnder").animate(
+    {
+      opacity: 0
+    },
+    750,
+    function()
+    {
+        showUnder();           
+    }
+    );
+}
+</script>
+</html>

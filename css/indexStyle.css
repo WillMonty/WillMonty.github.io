@@ -1,0 +1,186 @@
+#profilePic
+{
+    display:block;
+    float: right;
+    width: 219px;
+    height: 259px;
+}
+
+.row
+{
+    margin-bottom: 3em;
+}
+
+.centerWrap
+{
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+
+.hi
+{
+    font-size: 10em;
+    font-family: "Courier", monospace;
+    float: left;
+}
+
+#hiUnder
+{
+    width: 18%;
+    text-align: left;
+    min-width: 1em;
+    opacity: 0;
+}
+
+#introContainer
+{
+    margin-top: 2em;
+    height: 9em;
+}
+
+#intro
+{
+    text-align: center;
+    font-family: "Courier", monospace;
+    font-size: 3em;
+}
+
+.typed-cursor
+{
+    opacity: 0;
+}
+
+
+.hoverGif
+{
+    width: 28em;
+    height: 28em;
+    border: 3px solid black;
+}
+
+#visProj
+{
+    background: url("../media/gifs/visualizerProjectStill.jpg");
+    background-size: cover;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#visProj:hover
+{
+    background: url("../media/gifs/visualizerProject.gif");
+    cursor: pointer;
+    background-size: cover;
+}
+
+#otherVis
+{
+    background: url("../media/gifs/R2Still.jpg");
+    background-size: cover;
+    background-position: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#otherVis:hover
+{
+    background: url("../media/gifs/R2.gif");
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+}
+
+#asteroids
+{
+    background: url("../media/gifs/asteroidStill.jpg");
+    background-size: cover;
+    background-position: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#asteroids:hover
+{
+    background: url("../media/gifs/asteroids.gif");
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+}
+
+@media only screen and (min-width: 300px) and (max-width: 699px)
+{
+    #profilePic
+    {
+        width: 169px;
+        height: 209px;
+        float: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .hi
+    {
+        font-size: 8em;
+        text-align: right;
+        width: 50%;
+        margin: auto;
+        float: none;
+    }
+    
+    #introContainer
+    {
+        margin-top: 0em;
+        height: 10em;
+    }
+    
+    #intro
+    {
+        font-size: 1.5em;
+    }
+    
+    .hoverGif
+    {
+        width: 10em;
+        height: 10em;
+        margin-bottom: 1em;
+    }
+    
+    #asteroids
+    {
+        margin-left: auto;
+        margin-right: auto;
+
+    }
+}
+
+@media only screen and (min-width: 700px) and (max-width: 1425px)
+{
+    #introContainer
+    {
+        height: 10em;
+    }
+    
+    #intro
+    {
+        font-size: 2em;
+    }
+    
+    .hoverGif
+    {
+        width: 16em;
+        height: 16em;
+        
+    }
+}
+
+@keyframes blink{
+
+}
+@-webkit-keyframes blink{
+
+}
+@-moz-keyframes blink{
+
+}
+

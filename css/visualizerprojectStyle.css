@@ -1,0 +1,71 @@
+#vidContainer
+{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: right;
+}
+
+iframe
+{
+    border: 3px solid black;
+    width: 610px;
+    height: 465px;
+}
+
+#mainText
+{
+    font-size: 1.8em;
+}
+
+#docText
+{
+    font-size: 14pt;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+@media only screen and (min-width: 300px) and (max-width: 768px)
+{
+    #title
+    {
+        font-size: 1.1em;
+    }
+    
+    .typed-cursor
+    {
+        font-size: 1.1em;   
+    }
+    
+    #vidContainer
+    {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        margin-bottom: 1em;
+    }
+    
+    iframe
+    {
+        width: 205px;
+        height: 158px;
+    }
+    
+    #mainText
+    {
+        font-size: 1.2em;
+    }
+    
+    #docText
+    {
+        font-size: 12pt;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1290px)
+{
+    iframe
+    {
+        width: 305px;
+        height: 228px;
+    }
+}

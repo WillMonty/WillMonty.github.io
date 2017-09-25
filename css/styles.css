@@ -142,10 +142,10 @@ a:visited
         margin-top: -3em;
     }
     
-    #mainText
+    .mainText
     {
         font-size: 1.2em;
-    }
+	}
     
     .typed-cursor
     {

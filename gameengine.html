@@ -1,0 +1,80 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<link rel="shortcut icon" type="image/x-icon" href="media/favicon.ico">
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="bootstrap/js/bootstrap.js"></script>
+<script src="js/typed.js"></script>
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+<link rel="stylesheet" type="text/css" href="css/gameengineStyle.css">
+
+
+</head>
+ 
+<body>
+    
+    <nav class="navbar">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navCollapse" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html"></a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navCollapse">
+          <ul class="nav navbar-nav">
+			<li><a href="gameengine.html">3D Game Engine</a></li>
+            <li><a href="visualizerproject.html">Visualizer Project<span class="sr-only">(current)</span></a></li>
+            <li><a href="visualizergallery.html">Visualizer Gallery</a></li>
+            <li><a href="asteroids.html">Asteroids</a></li>
+            <li><a href="media/William%20G%20Montgomery%20Resum%C3%A9.pdf">Resum&eacute;</a></li>x
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <main>
+        <h2 id="title" class="themeText"></h2>
+        
+        <div class="container-fluid">
+            <div class="row well">
+                <div class="col-sm-6 col-xs-12" id="vidContainer">
+                    <video width="480" height="320" controls="controls">
+                        <source src="media/Video/Game%20Engine%20Video.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+					<p class="themeText mainText">I created a 3D Game Engine using C++, OpenGL, and GLFW. The engine can load .obj files and textures, compile my shaders, and can easily have different games written on top of it.<br> It also includes basic physics with object Transforms as well as collision detection.</p>	
+				    <a id="dropBtn" class="btn themeText" data-toggle="collapse" href="#collapseDiv" aria-expanded="false" aria-controls="collapseExample">
+						About the Game &#9660;
+					</a>
+					<div class="collapse" id="collapseDiv">
+					  <div class="themeText" id="dropText">
+					   The game consists of players hitting as many targets as they can in a minute. The target will switch to different positions and occasionally bounce around the backboard. The player can also adjust the backboard's distance to make it easier or harder. When the game is over the final score is shown.
+					  </div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+<script type="text/javascript">
+$(document).ready(function() 
+{
+    $("#title").typed({
+        strings: ["3D Game Engine"],
+        typeSpeed: 0.2
+    });
+});
+</script>
+</html>

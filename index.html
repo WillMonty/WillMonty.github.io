@@ -1,6 +1,6 @@
 <!doctype html>
-
 <html lang="en">
+
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="description" content="William Montgomery Portfolio Website">
@@ -33,6 +33,7 @@
 
         <div class="collapse navbar-collapse" id="navCollapse">
           <ul class="nav navbar-nav">
+			<li><a href="gameengine.html">3D Game Engine</a></li>
             <li><a href="visualizerproject.html">Visualizer Project<span class="sr-only">(current)</span></a></li>
             <li><a href="visualizergallery.html">Visualizer Gallery</a></li>
             <li><a href="asteroids.html">Asteroids</a></li>
@@ -46,12 +47,8 @@
         
         <div class="centerWrap container-fluid">
             <div class="row">
-                <div class="col-xs-12 col-sm-6">
+                <div id="photoContainer">
                     <img id="profilePic" src="media/profilepic.JPG" alt="A picture of me" class="img-thumbnail">
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                    <span class="hi">Hi</span>
-                    <span class="hi" id="hiUnder">_</span>
                 </div>
             </div>
             
@@ -63,14 +60,17 @@
         
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-4 col-xs-6 projColumn">
+				<div class="col-sm-3 col-xs-6 projColumn">
+                    <div class="hoverGif" id="engine" onclick="parent.location = 'gameengine.html'"></div>
+                </div>
+                <div class="col-sm-3 col-xs-6 projColumn">
                     <div class="hoverGif" id="visProj" onclick="parent.location = 'visualizerproject.html'"></div>
                 </div>
-                <div class="col-sm-4 col-xs-6 projColumn">
+                <div class="col-sm-3 col-xs-6 projColumn">
                     <div class="hoverGif" id="otherVis"
                     onclick="parent.location = 'visualizergallery.html'"></div>
                 </div>
-                <div class="col-sm-4 col-xs-12 projColumn">
+                <div class="col-sm-3 col-xs-12 projColumn">
                     <div class="hoverGif" id="asteroids"
                     onclick="parent.location = 'asteroids.html'"></div>
                 </div>
@@ -89,36 +89,5 @@ $(document).ready(function()
         typeSpeed: 0
     });
 });
-    
-function showUnder()
-{
-    
-    $("#hiUnder").animate(
-    {
-      opacity: 1
-    },
-    750,
-    function()
-    {
-        hideUnder();           
-    }
-   
-  );      
-}
-    
-function hideUnder()
-{
-    
-    $("#hiUnder").animate(
-    {
-      opacity: 0
-    },
-    750,
-    function()
-    {
-        showUnder();           
-    }
-    );
-}
 </script>
 </html>

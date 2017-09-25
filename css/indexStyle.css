@@ -1,14 +1,14 @@
 #profilePic
 {
     display:block;
-    float: right;
-    width: 219px;
+	margin: auto;
+    width: 220px;
     height: 259px;
 }
 
 .row
 {
-    margin-bottom: 3em;
+    margin-bottom: 2em;
 }
 
 .centerWrap
@@ -18,24 +18,9 @@
     text-align: center;
 }
 
-.hi
-{
-    font-size: 10em;
-    font-family: "Courier", monospace;
-    float: left;
-}
-
-#hiUnder
-{
-    width: 18%;
-    text-align: left;
-    min-width: 1em;
-    opacity: 0;
-}
-
 #introContainer
 {
-    margin-top: 2em;
+    margin-top: 1em;
     height: 9em;
 }
 
@@ -51,42 +36,55 @@
     opacity: 0;
 }
 
-
 .hoverGif
 {
     width: 28em;
     height: 28em;
     border: 3px solid black;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+.hoverGif:hover
+{
+	cursor: pointer;
+}
+
+#engine
+{
+    background: url("../media/gifs/engineStill.jpg");
+    background-size: cover;
+}
+
+#engine:hover
+{
+    background: url("../media/gifs/engine.gif");
+    background-size: cover;
+}
+
 
 #visProj
 {
     background: url("../media/gifs/visualizerProjectStill.jpg");
     background-size: cover;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 #visProj:hover
 {
     background: url("../media/gifs/visualizerProject.gif");
-    cursor: pointer;
     background-size: cover;
 }
 
 #otherVis
 {
     background: url("../media/gifs/R2Still.jpg");
-    background-size: cover;
+	background-size: cover;
     background-position: center;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 #otherVis:hover
 {
     background: url("../media/gifs/R2.gif");
-    cursor: pointer;
     background-size: cover;
     background-position: center;
 }
@@ -96,14 +94,11 @@
     background: url("../media/gifs/asteroidStill.jpg");
     background-size: cover;
     background-position: center;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 #asteroids:hover
 {
     background: url("../media/gifs/asteroids.gif");
-    cursor: pointer;
     background-size: cover;
     background-position: center;
 }

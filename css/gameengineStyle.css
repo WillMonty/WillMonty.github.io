@@ -1,0 +1,74 @@
+video
+{
+    float: right;
+    width: 45em;
+    height: 26em;
+}
+
+.mainText
+{
+	 font-size: 1.6em;
+}
+
+#dropBtn
+{
+	background: black;
+	color: white;
+	font-size: 1.4em;
+}
+
+#dropText
+{
+	font-size: 1.4em;
+}
+
+#dropBtn
+{
+	transition: background-color 0.3s;
+}
+
+#dropBtn:hover
+{
+    background-color: white;
+    color: black;
+    transition: color 0.5s;
+	transition: background-color 0.5s;
+}
+
+@media only screen and (min-width: 300px) and (max-width: 750px)
+{
+    video
+    {
+        width: 28em;
+        height: 16em;
+        float: none;
+    }
+    
+    #vidContainer
+    {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+    
+    video
+    {
+        width: 18em;
+        height: 10em;
+    }
+    
+    #dlText
+    {
+        font-size: 12pt;
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 751px) and (max-width: 1200px)
+{
+    video
+    {
+        width: 30em;
+        height: 20em;
+    }
+}

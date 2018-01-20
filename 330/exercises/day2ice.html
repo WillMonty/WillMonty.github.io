@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>First Canvas Done</title>
+	<style type="text/css">
+	canvas{
+		border:1px solid gray;
+	}
+	</style>
+	<script>
+		// #0 - in this class we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+        
+        (function(){ //Immediately invoked function expression hides public variables
+		'use strict';
+		let ctx;
+		//var myStuidVAriable = 10;
+		// #1 call the init function after the pages loads
+		window.onload = function(){
+			console.log("page loaded!");
+			// #2 Now that the page has loaded, start drawing!
+			
+			// A - canvas variable points at <canvas> tag
+			let canvas = document.querySelector('canvas');
+			
+			// B - the ctx variable points at a "2D drawing context"
+			ctx = canvas.getContext('2d');
+			
+			//setInterval(drawRandomRect,1000/30);
+            requestAnimationFrame(loop);
+			setInterval(cls,5000);
+		}
+        
+        function loop()
+        {
+            requestAnimationFrame(loop);
+            drawRandomRect();
+			drawRandomLine();
+			drawRandomCircle();
+        }
+		
+		function getRandomColor(){
+			function getByte(){
+				return 55 + Math.round(Math.random() * 200);
+			}
+			return "rgba(" + getByte() + "," + getByte() + "," + getByte() + ",.8)";
+		}
+		
+		function drawRandomRect(){
+			ctx.fillStyle = getRandomColor();
+			let x = Math.random() * 640;
+			let y = Math.random() * 480;
+			let width = 10 + Math.random() * 90;
+			let height = 10 + Math.random() * 90;
+			ctx.fillRect(x,y,width,height);
+		}
+			
+		function drawRandomLine()
+		{
+			ctx.beginPath();
+            ctx.moveTo(Math.random() * 640, Math.random() * 480);
+            ctx.lineTo(Math.random() * 640, Math.random() * 480);
+            ctx.closePath();
+            ctx.strokeStyle = getRandomColor();
+            ctx.lineWidth = 3;
+            ctx.stroke();
+		}
+			
+		function drawRandomCircle()
+		{
+			ctx.beginPath();
+            //  void arc(x,y,radius,startAngle,endAngle,counterclockwise)
+            ctx.arc(320, 
+					240,
+					Math.random() * 100,
+					0, 
+					Math.PI * 2, 
+					false);
+            ctx.closePath();
+            ctx.fillStyle = getRandomColor();
+            ctx.strokeStyle = getRandomColor();
+            ctx.lineWidth = 5;
+            ctx.globalAlpha = 0.8;
+            ctx.fill();
+            ctx.stroke();
+		}
+		
+		function cls(){
+			ctx.clearRect(0,0,640,480);
+		}
+            
+        })() //call IIFE
+	</script>
+</head>
+<body>
+	<canvas width="640" height="480">
+		Get a real browser!
+	</canvas>
+</body>
+</html>
+
+
+

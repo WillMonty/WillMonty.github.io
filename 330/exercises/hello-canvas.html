@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>William Montgomery Hello Canvas</title>
+	<style type="text/css">
+		canvas
+		{
+			border:1px solid gray;
+		}
+		
+		#fontLoader
+		{
+			height: 0;
+			width: 0;
+			overflow: hidden;
+		}
+		#indie
+		{
+			font-family: 'Indie Flower', cursive;
+		}
+		#lobster
+		{
+			font-family: 'Lobster', cursive;
+		}
+	</style>
+  <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+	<script>
+		// #0 - In this course we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+		'use strict';
+        let ctx;
+		let triYMovement = 0;
+        
+		
+		// #1 call the init function after the pages loads
+		// this is called an "event handler"
+		window.onload = init;
+	
+		function init(){
+			// #2 Now that the page has loaded, start drawing!
+			console.log('init called');
+			
+			// A - canvas variable points at <canvas> tag
+		  var canvas = document.querySelector('canvas');
+			
+			// B - the ctx variable points at a "2D drawing context"
+		   ctx = canvas.getContext('2d');	
+			
+			drawBackground();
+            
+            //setInterval(drawRandomRect, 250);
+			setInterval(drawAllTriangles, 25);
+            setInterval(clear, 2000);
+		}
+		
+		function drawBackground()
+		{
+			// C - all fill operations are now in yellow
+			ctx.fillStyle = 'black';
+			
+			// D - fill a rectangle with the current fill color
+			ctx.fillRect(0,0,640,480);
+			
+			// E - set the current font
+			ctx.font = 'bold 40pt Indie Flower';
+			
+			// F - change the current fill color
+			ctx.fillStyle = '#ffff00';
+			
+			ctx.save();
+			
+			//Add shadow
+			ctx.shadowColor = 'red';
+			ctx.shadowOffsetX = 0;
+			ctx.shadowOffsetY = 0;
+			ctx.shadowBlur = 30;
+			
+			//Set text alignment
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			
+			// G - draw and fill text using current fill color
+			ctx.fillText('William Montgomery', 320, 240);
+			
+			//IGM Text
+            ctx.font = 'bold 40pt Lobster';
+            ctx.fillStyle = 'white';
+            ctx.fillText('IGM', 320, 300);
+			
+			ctx.restore();
+			
+			//Draw lines
+			ctx.strokeStyle = 'green';
+			ctx.lineWidth = 7;
+			
+			ctx.beginPath();
+			ctx.moveTo(0,100);
+			ctx.lineTo(640, 100);
+			ctx.closePath();
+			ctx.stroke();
+			
+			ctx.strokeStyle = 'red';
+			ctx.lineWidth = 20;
+			
+			ctx.beginPath();
+			ctx.moveTo(100,0);
+			ctx.lineTo(100, 480);
+			ctx.closePath();
+			ctx.stroke();
+			
+			//Draw rectangles
+			ctx.fillStyle = 'red';
+			ctx.fillRect(0,0, 90, 97);
+			ctx.fillStyle = 'green';
+			ctx.fillRect(640 - 89, 480 - 97,89, 97);
+			
+		}
+		
+		function drawMovingTriangle(leftX, rightX, bottomY, topY, directionFlip)
+		{	
+			let localTriY = triYMovement;
+			if(directionFlip)
+			{
+				localTriY = triYMovement * -1;	
+			}
+			
+			ctx.fillStyle = 'black';
+			ctx.lineWidth = 2;
+			ctx.fillRect(leftX, topY + localTriY, rightX - leftX, bottomY - topY);
+			ctx.strokeStyle = 'white';
+			
+			ctx.beginPath();
+			ctx.moveTo(leftX, bottomY + localTriY);
+			ctx.lineTo(rightX, bottomY + localTriY);
+			ctx.lineTo(leftX + (rightX - leftX)/2 , topY + localTriY);
+			ctx.lineTo(leftX, bottomY + localTriY);
+			ctx.closePath();
+			ctx.stroke();
+			
+			triYMovement += 0.2;
+		}
+		
+		function drawAllTriangles()
+		{
+			drawMovingTriangle(270, 370, 50, 0, false);
+			drawMovingTriangle(135, 235, 50, 0, false);
+			drawMovingTriangle(405, 505, 50, 0, false);
+			
+			drawMovingTriangle(270, 370, 480, 430, true);
+			drawMovingTriangle(135, 235, 480, 430, true);
+			drawMovingTriangle(405, 505, 480, 430, true);
+		}
+        
+        function clear()
+        {
+            ctx.clearRect(0,0,640,480);
+			triYMovement = 0;
+           	drawBackground();
+        }
+	</script>
+</head>
+<body>
+	<canvas width="640" height="480">
+		Get a real browser!
+		<!-- The user will only see the above text if their browser is older and doesn't support <canvas> -->
+	</canvas>
+	<div id="fontLoader">
+		<p id="indie">Indie Font</p>
+		<p id="lobster">Lobster Font</p>
+	</div>
+</body>
+</html>

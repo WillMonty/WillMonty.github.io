@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>First Canvas Done</title>
+	<style type="text/css">
+	canvas{
+		border:1px solid gray;
+	}
+	</style>
+	<script>
+		// #0 - in this class we will always use ECMAScript 5's "strict" mode
+		// See what 'use strict' does here:
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions_and_function_scope/Strict_mode
+		'use strict';
+		
+		// #1 call the init function after the pages loads
+		window.onload = init;
+	
+		function init()
+        {
+			console.log("page loaded!");
+
+			let canvas = document.querySelector('canvas');
+			let ctx = canvas.getContext('2d');
+			
+			//Sky
+			ctx.fillStyle = 'skyblue';
+			ctx.fillRect(0,0, 640, 350);
+			
+			//Sun
+			ctx.fillStyle = 'yellow';
+			ctx.beginPath();
+			ctx.arc(640, 0, 80, 0, Math.PI * 2, false);
+			ctx.closePath();
+			ctx.fill();
+			
+			//Ground
+			ctx.fillStyle = 'darkgreen';
+			ctx.fillRect(0,350, 640, 150);
+			
+            //Horizon
+            ctx.beginPath();
+            ctx.moveTo(0, 350);
+            ctx.lineTo(640, 350);
+            ctx.closePath()
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'grey';
+            ctx.stroke();
+            
+            //Tree
+                //Trunk
+            ctx.fillStyle = 'brown';
+            ctx.fillRect(75, 325, 10, 50);
+                //Leaves
+            ctx.beginPath();
+            ctx.moveTo(45, 325);
+            ctx.lineTo(115, 325);
+            ctx.lineTo(80, 225);
+            ctx.closePath();
+            ctx.fillStyle = 'green';
+            ctx.fill();
+            
+            //Face
+            //  void arc(x,y,radius,startAngle,endAngle, counterclockwise)
+                //Head
+            ctx.beginPath();
+            ctx.arc(320,250,200,0, Math.PI * 2, false);
+            ctx.closePath();
+            ctx.fillStyle = 'yellow';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.save();
+            ctx.fill();
+            ctx.stroke();
+            
+                //Smile
+			ctx.save();
+			ctx.beginPath();
+			ctx.translate(322, 180);
+			ctx.scale(1.12,1.5);
+			ctx.rotate(Math.PI/3);
+            ctx.arc(0,0,90,0, Math.PI/3, false);
+			ctx.lineWidth = 6;
+            ctx.stroke();
+			ctx.restore();
+			
+				//Nose Top
+			ctx.fillStyle = 'black';
+			ctx.fillRect(305,200,10,25);
+			
+				//Nose Bottom
+			ctx.save();
+			ctx.beginPath();
+			ctx.translate(305, 220);
+			ctx.scale(0.8,0.9);
+			ctx.rotate(Math.PI * 1.48);
+			ctx.arc(-40, 0, 32, 0, Math.PI + 1, false);
+			ctx.lineWidth = 11;
+			ctx.stroke();
+			ctx.restore();
+			
+				//Left Eye
+			ctx.beginPath();
+			ctx.arc(229, 209, 13, 0, Math.PI * 2, false);
+			ctx.closePath();
+			ctx.lineWidth = 6;
+			ctx.stroke();
+				
+				//Right Eye
+			ctx.beginPath();
+			ctx.arc(409, 209, 13, 0, Math.PI * 2, false);
+			ctx.closePath();
+			ctx.lineWidth = 6;
+			ctx.stroke();
+			
+				//Left Brow
+			ctx.save();
+			ctx.beginPath();
+			ctx.translate(238, 209);
+			ctx.scale(1.25,0.5);
+			ctx.rotate(Math.PI);
+			ctx.arc(0, 0, 32, 0, Math.PI, false);
+			ctx.lineWidth = 9;
+			ctx.stroke();
+			ctx.restore();
+			
+				//Right Brow
+			ctx.save();
+			ctx.beginPath();
+			ctx.translate(418, 209);
+			ctx.scale(1.25,0.5);
+			ctx.rotate(Math.PI);
+			ctx.arc(0, 0, 32, 0, Math.PI, false);
+			ctx.lineWidth = 9;
+			ctx.stroke();
+			ctx.restore();
+			
+				//Left "Cheek"
+			ctx.save();
+			ctx.beginPath();
+			ctx.translate(175, 261);
+			ctx.scale(0.55,1.5);
+			ctx.rotate(Math.PI/2);
+			ctx.arc(0, 0, 40, 0, Math.PI, false);
+			ctx.lineWidth = 6;
+			ctx.stroke();
+			ctx.restore();
+			
+				//Right "Cheek"
+			ctx.save();
+			ctx.beginPath();
+			ctx.translate(475, 261);
+			ctx.scale(0.55,1.5);
+			ctx.rotate(-Math.PI/2);
+			ctx.arc(0, 0, 40, 0, Math.PI, false);
+			ctx.lineWidth = 6;
+			ctx.stroke();
+			ctx.restore();	
+		}
+	</script>
+</head>
+<body>
+	<canvas width="640" height="480">
+		Get a real browser!
+	</canvas>
+</body>
+</html>

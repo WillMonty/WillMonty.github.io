@@ -54,19 +54,20 @@
 				let audioElement;
 				let videoElement;
 				let defaultSong = 'media/audio/New Adventure Theme.mp3';
-				let invert = false;
+                
 				let reverb = false;
-
+                let bassPercent = 0;
+                
+                //Dat gui controls object
 				let controlFunc = function()
 				{
 					this.invert = false;
+                    this.videosource = 'media/ninja.mp4';
+                    this.reverb = false;
 				}
 				let controls = new controlFunc();
 
 				function init(){
-
-					let gui = new dat.GUI();
-					gui.add(controls, 'invert');
 
 					// set up canvas stuff
 					canvas = document.querySelector('canvas');
@@ -92,8 +93,6 @@
 
 				function createWebAudioContextAndNodes(audioElement) {
 					// create new AudioContext
-					// The || is because WebAudio has not been standardized across browsers yet
-					// http://webaudio.github.io/web-audio-api/#the-audiocontext-interface
 					audioCtx = new (window.AudioContext || window.webkitAudioContext);
 
 					// create an analyser node
@@ -102,26 +101,16 @@
 					//create convolver node
 					convolverNode = audioCtx.createConvolver();
 
-					/*
-					We will request NUM_SAMPLES number of samples or "bins" spaced equally 
-					across the sound spectrum.
-
-					If NUM_SAMPLES (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, 
-					the third is 344Hz. Each bin contains a number between 0-255 representing 
-					the amplitude of that frequency.
-					*/ 
-
 					// fft stands for Fast Fourier Transform
 					analyserNode.fftSize = NUM_SAMPLES;
 
 
-					// grab audio track via XHR for convolver node
-
+					// grab reverb impulse via XHR for convolver node
 					let soundSource;
-
 					let ajaxRequest = new XMLHttpRequest();
 					ajaxRequest.open('GET', 'media/impulse.ogg', true);
-					ajaxRequest.responseType = 'arraybuffer';
+					ajaxRequest.responseType = 'arraybuffer'; 
+                    //Get file as an array to be decoded
 
 					ajaxRequest.onload = function() {
 						let audioData = ajaxRequest.response;
@@ -130,7 +119,7 @@
 						}, function(e){"Error with decoding audio data" + e.err});
 					}
 
-					ajaxRequest.send();
+					ajaxRequest.send(); //Send request to be loaded with above function
 
 					// this is where we hook up the <audio> element to the analyserNode
 					sourceNode = audioCtx.createMediaElementSource(audioElement); 
@@ -142,6 +131,32 @@
 				}
 
 				function setupUI(){
+                    
+                    //Set up dat.GUI
+                    let gui = new dat.GUI();
+                    let reverbGUI = gui.add(controls, 'reverb');
+					let invertGUI = gui.add(controls, 'invert');
+                    let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Example: 'media/stuff.mp4',});
+                    
+                    reverbGUI.onChange(function(value) {
+                        if(value) //Reconnect nodes with convolver if reverb checked
+                        {
+                            sourceNode.connect(convolverNode);
+							convolverNode.connect(analyserNode);
+							analyserNode.connect(audioCtx.destination);
+						}
+						else
+						{
+							convolverNode.disconnect();			
+						}
+                    });
+                    
+                    videoGUI.onChange(function(value) {
+                       //Change out video source ********** 
+                    });
+                    
+                    
+                    //Set up audio section
 					document.querySelector("#trackSelect").onchange = function(e){
 						playStream(audioElement,e.target.value);
 					};
@@ -153,7 +168,7 @@
 					document.querySelector("#reverbBox").onchange = function(e){
 						reverb = e.target.checked;
 						
-						if(reverb)
+						if(reverb) //Reconnect nodes with convolver if reverb checked
 						{
 							sourceNode.connect(convolverNode);
 							convolverNode.connect(analyserNode);
@@ -176,14 +191,8 @@
 				function update() { 
 					// this schedules a call to the update() method in 1/60 seconds
 					requestAnimationFrame(update);
-
-
-					/*
-				Nyquist Theorem
-				http://whatis.techtarget.com/definition/Nyquist-Theorem
-				The array of data we get back is 1/2 the size of the sample rate 
-					*/
-
+                    
+                    //If NUM_SAMPLES (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, the third is 344Hz.
 					// create a new array of 8-bit integers (0-255)
 					var data = new Uint8Array(NUM_SAMPLES/2); 
 
@@ -195,36 +204,63 @@
 					ctx.clearRect(0,0,canvas.width,canvas.height);
 
 					//Draw video
-					ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                    //Zoom destination based on percentage of bass
+                    //(image, source x, source y, source width, source height, dest. x, dest. y, dest width, dest height)
+                   ctx.drawImage(videoElement,
+                                  0, 0,
+                                  videoElement.videoWidth, videoElement.videoHeight,
+                                  0 - (300 * bassPercent), 0 - (200 * bassPercent),
+                                  canvas.width + (600 * bassPercent), canvas.height + (300 * bassPercent)
+                                 );
+                    
+                    console.log(bassPercent); //Why is this so high???
+                    
+                    /**ctx.drawImage(videoElement,
+                                  0, 0,
+                                  videoElement.videoWidth, videoElement.videoHeight,
+                                  -300, -200,
+                                  canvas.width + 300, canvas.height + 200
+                                 );*/
 
+                    //Bar vars
 					ctx.lineWidth = 5;
 					let pixelsPerSection = canvas.width/data.length;
 					let maxHeight = canvas.height;
 					let minHeight = 0;
 					let lastX = 0;
 					let lastY = canvas.height;
+                    
+                    //Playback vars
+                    let bassSum = 0;
+                    let playBins = 3;
 
 					ctx.moveTo(0,0);
 
 					// loop through the data and draw!
 					for(var i=0; i<data.length; i++) 
 					{
+                        if(i < playBins)
+                        {
+                            bassSum += data[i];            
+                        }
 						let percent = data[i]/255;
 						let currHeight = maxHeight * percent;
 
 						ctx.strokeStyle = 'rgb(' + currHeight + ',255,0)';
-						//ctx.strokeStyle = 'green';
 
 						ctx.beginPath();
 						ctx.moveTo(lastX, lastY);
-						ctx.lineTo(lastX, 600 - currHeight);
+						ctx.lineTo(lastX, canvas.height - currHeight);
 						ctx.stroke();
 
 						lastX = lastX + pixelsPerSection;
-						lastY = 600 - currHeight * 1.2;
+						lastY = canvas.height - currHeight * 1.2;
 
 					}
 					manipulatePixels();
+                    
+                    bassPercent = (bassSum/playBins)/255;
+                    videoElement.playbackRate = 1.5 * bassPercent;
 
 				}
 
@@ -310,7 +346,7 @@
 
 		<p id="status">No Track Playing</p>
 
-
+        <!-- This video element is hidden and instead drawn in canvas -->
 		<video autoplay loop id="vid">
 			<source src="media/ninja.mp4" type="video/mp4">
 		</video>

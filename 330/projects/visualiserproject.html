@@ -48,22 +48,21 @@
 			(function(){
 				"use strict";
 
-				let NUM_SAMPLES = 256;
+				let NUM_SAMPLES = 512;
 				let audioCtx, analyserNode, convolverNode, sourceNode;
 				let canvas, ctx;
 				let audioElement;
-				let videoElement;
+				let videoElement, videoSourceElement;
 				let defaultSong = 'media/audio/New Adventure Theme.mp3';
-                
-				let reverb = false;
-                let bassPercent = 0;
-                
-                //Dat gui controls object
+
+				let bassPercent = 0;
+
+				//Dat gui controls object
 				let controlFunc = function()
 				{
 					this.invert = false;
-                    this.videosource = 'media/ninja.mp4';
-                    this.reverb = false;
+					this.videosource = 'media/ninja.mp4';
+					this.reverb = false;
 				}
 				let controls = new controlFunc();
 
@@ -73,6 +72,7 @@
 					canvas = document.querySelector('canvas');
 					ctx = canvas.getContext("2d");
 					videoElement = document.getElementById('vid');
+					videoSourceElement = document.getElementById('vidsource');
 
 					// get reference to <audio> element on page
 					audioElement = document.querySelector('audio');
@@ -110,7 +110,7 @@
 					let ajaxRequest = new XMLHttpRequest();
 					ajaxRequest.open('GET', 'media/impulse.ogg', true);
 					ajaxRequest.responseType = 'arraybuffer'; 
-                    //Get file as an array to be decoded
+					//Get file as an array to be decoded
 
 					ajaxRequest.onload = function() {
 						let audioData = ajaxRequest.response;
@@ -131,44 +131,15 @@
 				}
 
 				function setupUI(){
-                    
-                    //Set up dat.GUI
-                    let gui = new dat.GUI();
-                    let reverbGUI = gui.add(controls, 'reverb');
+
+					//Set up dat.GUI
+					let gui = new dat.GUI();
+					let reverbGUI = gui.add(controls, 'reverb');
 					let invertGUI = gui.add(controls, 'invert');
-                    let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Example: 'media/stuff.mp4',});
-                    
-                    reverbGUI.onChange(function(value) {
-                        if(value) //Reconnect nodes with convolver if reverb checked
-                        {
-                            sourceNode.connect(convolverNode);
-							convolverNode.connect(analyserNode);
-							analyserNode.connect(audioCtx.destination);
-						}
-						else
-						{
-							convolverNode.disconnect();			
-						}
-                    });
-                    
-                    videoGUI.onChange(function(value) {
-                       //Change out video source ********** 
-                    });
-                    
-                    
-                    //Set up audio section
-					document.querySelector("#trackSelect").onchange = function(e){
-						playStream(audioElement,e.target.value);
-					};
+					let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Worm: 'media/worm.mp4',});
 
-					document.querySelector("#fsButton").onclick = function(){
-						requestFullscreen(canvas);
-					};
-
-					document.querySelector("#reverbBox").onchange = function(e){
-						reverb = e.target.checked;
-						
-						if(reverb) //Reconnect nodes with convolver if reverb checked
+					reverbGUI.onChange(function(value) {
+						if(value) //Reconnect nodes with convolver if reverb checked
 						{
 							sourceNode.connect(convolverNode);
 							convolverNode.connect(analyserNode);
@@ -178,7 +149,24 @@
 						{
 							convolverNode.disconnect();			
 						}
+					});
+
+					videoGUI.onChange(function(value) {
+						videoSourceElement.setAttribute('src', value);
+						videoElement.load();
+						videoElement.play();
+					});
+
+
+					//Set up audio section
+					document.querySelector("#trackSelect").onchange = function(e){
+						playStream(audioElement,e.target.value);
 					};
+
+					document.querySelector("#fsButton").onclick = function(){
+						requestFullscreen(canvas);
+					};
+
 				}
 
 				function playStream(audioElement,path){
@@ -191,59 +179,54 @@
 				function update() { 
 					// this schedules a call to the update() method in 1/60 seconds
 					requestAnimationFrame(update);
-                    
-                    //If NUM_SAMPLES (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, the third is 344Hz.
+
+					//If NUM_SAMPLES (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, the third is 344Hz.
 					// create a new array of 8-bit integers (0-255)
-					var data = new Uint8Array(NUM_SAMPLES/2); 
+					let timeData = new Uint8Array(NUM_SAMPLES/2);
+					let freqData = new Uint8Array(analyserNode.frequencyBinCount); 
 
 					// populate the array with the frequency data
 					// notice these arrays can be passed "by reference" 
-					analyserNode.getByteFrequencyData(data);
+					analyserNode.getByteTimeDomainData(timeData);
+					analyserNode.getByteFrequencyData(freqData);
 
 					// DRAW!
 					ctx.clearRect(0,0,canvas.width,canvas.height);
 
 					//Draw video
-                    //Zoom destination based on percentage of bass
-                    //(image, source x, source y, source width, source height, dest. x, dest. y, dest width, dest height)
-                   ctx.drawImage(videoElement,
-                                  0, 0,
-                                  videoElement.videoWidth, videoElement.videoHeight,
-                                  0 - (300 * bassPercent), 0 - (200 * bassPercent),
-                                  canvas.width + (600 * bassPercent), canvas.height + (300 * bassPercent)
-                                 );
-                    
-                    console.log(bassPercent); //Why is this so high???
-                    
-                    /**ctx.drawImage(videoElement,
-                                  0, 0,
-                                  videoElement.videoWidth, videoElement.videoHeight,
-                                  -300, -200,
-                                  canvas.width + 300, canvas.height + 200
-                                 );*/
+					//Zoom destination based on percentage of bass
+					//(image, source x, source y, source width, source height, dest. x, dest. y, dest width, dest height)
+					ctx.drawImage(videoElement,
+								  0, 0,
+								  videoElement.videoWidth, videoElement.videoHeight,
+								  0 - (300 * bassPercent), 0 - (200 * bassPercent),
+								  canvas.width + (600 * bassPercent), canvas.height + (300 * bassPercent)
+								 );
 
-                    //Bar vars
+					console.log(bassPercent); //Why is this so high??
+
+					//Bar vars
 					ctx.lineWidth = 5;
-					let pixelsPerSection = canvas.width/data.length;
+					let pixelsPerSection = canvas.width/freqData.length;
 					let maxHeight = canvas.height;
 					let minHeight = 0;
 					let lastX = 0;
 					let lastY = canvas.height;
-                    
-                    //Playback vars
-                    let bassSum = 0;
-                    let playBins = 3;
+
+					//Playback vars
+					let bassSum = 0;
+					let playBins = 2;
 
 					ctx.moveTo(0,0);
-
+					
 					// loop through the data and draw!
-					for(var i=0; i<data.length; i++) 
+					for(let i = 0; i < freqData.length; i++) 
 					{
-                        if(i < playBins)
-                        {
-                            bassSum += data[i];            
-                        }
-						let percent = data[i]/255;
+						if(i < playBins)
+						{
+							bassSum += freqData[i];
+						}
+						let percent = freqData[i]/255;
 						let currHeight = maxHeight * percent;
 
 						ctx.strokeStyle = 'rgb(' + currHeight + ',255,0)';
@@ -255,12 +238,14 @@
 
 						lastX = lastX + pixelsPerSection;
 						lastY = canvas.height - currHeight * 1.2;
+						
+						
 
 					}
 					manipulatePixels();
-                    
-                    bassPercent = (bassSum/playBins)/255;
-                    videoElement.playbackRate = 1.5 * bassPercent;
+
+					bassPercent = (bassSum/playBins)/255;
+					videoElement.playbackRate = Math.round(1.5 * bassPercent); //Round to remove error with playbackRate range
 
 				}
 
@@ -328,7 +313,7 @@
 					<option value="media/audio/New Adventure Theme.mp3">New Adventure Theme</option>
 					<option value="media/audio/Peanuts Theme.mp3">Peanuts Theme</option>
 					<option value="media/audio/The Picard Song.mp3">The Picard Song</option>
-					<option value="media/audio/slamurhead.mp3">slamurhead</option>
+					<option value="media/audio/FLEXLIKEOUU.mp3">LIKEOUU</option>
 				</select>
 			</label>
 			<audio controls loop></audio>
@@ -336,19 +321,13 @@
 		</div>
 
 		<div id="audioEffects">
-			<div>
-				<span>
-					<label for="reverbBox">Reverb</label>
-					<input type='checkbox' id='reverbBox'>
-				</span>
-			</div>
 		</div>
 
 		<p id="status">No Track Playing</p>
 
-        <!-- This video element is hidden and instead drawn in canvas -->
+		<!-- This video element is hidden and instead drawn in canvas -->
 		<video autoplay loop id="vid">
-			<source src="media/ninja.mp4" type="video/mp4">
+			<source id='vidsource' src="media/ninja.mp4" type="video/mp4">
 		</video>
 
 	</body>

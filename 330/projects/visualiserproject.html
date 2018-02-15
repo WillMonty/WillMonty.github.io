@@ -3,10 +3,13 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Will & Sanketh Visualizer</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap/bootstrap.css">
+		<script src="bootstrap/jquery-3.1.1.min.js"></script>
+		<script src="bootstrap/bootstrap.js"></script>
 		<style>
 			body 
 			{
-				background: #eeeeee;
+				background: #474d56;
 				font-family: tahoma, verdana, sans serif;
 			}
 
@@ -19,7 +22,7 @@
 				background: black;
 			}
 
-			#trackControls, #audioEffects
+			#trackControls
 			{
 				margin-left: auto;
 				margin-right: auto;
@@ -30,16 +33,31 @@
 			#trackControls > *
 			{
 				margin-right: 1em;
+				vertical-align:top;
 			}
 
-			#vid
+			#trackSelect
 			{
-				visibility: hidden;
+				height: 2.5em;
+			}
+
+			label
+			{
+				color: white;
+				font-size: 16pt;
 			}
 
 			p
 			{
 				text-align: center;
+				font-size: 1.5em;
+				color: white;
+				margin-top: 1em;
+			}
+
+			#vid
+			{
+				visibility: hidden;
 			}
 		</style>
 		<script type="text/javascript" src="dat.gui.js"></script>
@@ -48,12 +66,12 @@
 			(function(){
 				"use strict";
 
-				let NUM_SAMPLES = 512;
+				let NUM_SAMPLES = 2048;
 				let audioCtx, analyserNode, convolverNode, sourceNode;
 				let canvas, ctx;
 				let audioElement;
 				let videoElement, videoSourceElement;
-				let defaultSong = 'media/audio/New Adventure Theme.mp3';
+				let defaultSong = 'media/audio/Audio Test.wav';
 
 				let bassPercent = 0;
 
@@ -63,6 +81,8 @@
 					this.invert = false;
 					this.videosource = 'media/ninja.mp4';
 					this.reverb = false;
+					this.zoomAmount = 15;
+					this.speedFactor = 1.5;
 				}
 				let controls = new controlFunc();
 
@@ -127,6 +147,7 @@
 
 					// here we connect to the destination i.e. speakers
 					analyserNode.connect(audioCtx.destination);
+
 					return analyserNode;
 				}
 
@@ -134,9 +155,11 @@
 
 					//Set up dat.GUI
 					let gui = new dat.GUI();
+					let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Worm: 'media/worm.mp4',});
 					let reverbGUI = gui.add(controls, 'reverb');
 					let invertGUI = gui.add(controls, 'invert');
-					let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Worm: 'media/worm.mp4',});
+					let zoomGUI = gui.add(controls, 'zoomAmount', 0, 100);
+					let vidSpeedGUI = gui.add(controls, 'speedFactor', 0, 3);
 
 					reverbGUI.onChange(function(value) {
 						if(value) //Reconnect nodes with convolver if reverb checked
@@ -161,6 +184,8 @@
 					//Set up audio section
 					document.querySelector("#trackSelect").onchange = function(e){
 						playStream(audioElement,e.target.value);
+						let tracks = document.querySelector("#trackSelect");
+						document.querySelector('#status').innerHTML = "Now Playing: " + tracks.options[tracks.selectedIndex].text;
 					};
 
 					document.querySelector("#fsButton").onclick = function(){
@@ -172,8 +197,7 @@
 				function playStream(audioElement,path){
 					audioElement.src = path;
 					audioElement.play();
-					audioElement.volume = 0.2;
-					document.querySelector('#status').innerHTML = "Now playing: " + path;
+					audioElement.volume = 1;
 				}
 
 				function update() { 
@@ -196,57 +220,62 @@
 					//Draw video
 					//Zoom destination based on percentage of bass
 					//(image, source x, source y, source width, source height, dest. x, dest. y, dest width, dest height)
+					let maxZoom = controls.zoomAmount * 3;
+
 					ctx.drawImage(videoElement,
 								  0, 0,
 								  videoElement.videoWidth, videoElement.videoHeight,
-								  0 - (300 * bassPercent), 0 - (200 * bassPercent),
-								  canvas.width + (600 * bassPercent), canvas.height + (300 * bassPercent)
+								  0 - (maxZoom * bassPercent), 0 - ((maxZoom * 0.66) * bassPercent),
+								  canvas.width + ((maxZoom * 2) * bassPercent), canvas.height + (maxZoom * bassPercent)
 								 );
-
-					console.log(bassPercent); //Why is this so high??
 
 					//Bar vars
 					ctx.lineWidth = 5;
 					let pixelsPerSection = canvas.width/freqData.length;
-					let maxHeight = canvas.height;
+					let maxHeight = 300;
 					let minHeight = 0;
 					let lastX = 0;
-					let lastY = canvas.height;
 
-					//Playback vars
+					//Bass detection vars
 					let bassSum = 0;
-					let playBins = 2;
+					let bassBins = 5;
 
-					ctx.moveTo(0,0);
-					
 					// loop through the data and draw!
-					for(let i = 0; i < freqData.length; i++) 
+					for(let i = 10; i < freqData.length; i++) 
 					{
-						if(i < playBins)
+						//Playback
+						if(i < 10 + bassBins)
 						{
-							bassSum += freqData[i];
+							bassSum += freqData[i];		
 						}
+
+						//Lines
 						let percent = freqData[i]/255;
 						let currHeight = maxHeight * percent;
 
-						ctx.strokeStyle = 'rgb(' + currHeight + ',255,0)';
+						ctx.strokeStyle = 'rgb(' + freqData[i] + ',255,0)';
 
 						ctx.beginPath();
-						ctx.moveTo(lastX, lastY);
+						ctx.moveTo(lastX, canvas.height);
 						ctx.lineTo(lastX, canvas.height - currHeight);
 						ctx.stroke();
 
 						lastX = lastX + pixelsPerSection;
-						lastY = canvas.height - currHeight * 1.2;
-						
-						
-
 					}
 					manipulatePixels();
 
-					bassPercent = (bassSum/playBins)/255;
-					videoElement.playbackRate = Math.round(1.5 * bassPercent); //Round to remove error with playbackRate range
+					bassPercent = (bassSum/bassBins)/255;
 
+					let currPlaySpeed = (controls.speedFactor * bassPercent).toFixed(2);
+
+					if(currPlaySpeed < 0.09)
+					{
+						currPlaySpeed = 0;			
+					}
+
+					videoElement.playbackRate = currPlaySpeed; //Round to remove error with playbackRate range
+
+					//console.log(audioElement.volume);
 				}
 
 				function manipulatePixels()
@@ -308,22 +337,30 @@
 	<body>
 		<canvas id="canvas" width="1200" height="800"></canvas>
 		<div id="trackControls">
-			<label>Track: 
-				<select id="trackSelect" >
-					<option value="media/audio/New Adventure Theme.mp3">New Adventure Theme</option>
-					<option value="media/audio/Peanuts Theme.mp3">Peanuts Theme</option>
-					<option value="media/audio/The Picard Song.mp3">The Picard Song</option>
-					<option value="media/audio/FLEXLIKEOUU.mp3">LIKEOUU</option>
-				</select>
-			</label>
+			<label>Track:</label>
+			<select id="trackSelect">
+				<option value="media/audio/Audio Test.wav">Audio Test</option>
+				<option value="media/audio/FLEXLIKEOUU.mp3">LIKEOUU</option>
+				<option value="media/audio/New Adventure Theme.mp3">New Adventure Theme</option>
+				<option value="media/audio/Peanuts Theme.mp3">Peanuts Theme</option>
+				<option value="media/audio/The Picard Song.mp3">The Picard Song</option>
+			</select>
 			<audio controls loop></audio>
-			<button id="fsButton">Go Full Screen</button><br>
+			<button class='btn btn-light'id="fsButton">Go Full Screen</button><br>
 		</div>
 
-		<div id="audioEffects">
-		</div>
+		<!--<div class="dropdown">
+			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				Dropdown button
+			</button>
+			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+				<a class="dropdown-item" href="#">Action</a>
+				<a class="dropdown-item" href="#">Another action</a>
+				<a class="dropdown-item" href="#">Something else here</a>
+			</div>
+		</div>-->
 
-		<p id="status">No Track Playing</p>
+		<p id="status">Now Playing: Audio Test</p>
 
 		<!-- This video element is hidden and instead drawn in canvas -->
 		<video autoplay loop id="vid">

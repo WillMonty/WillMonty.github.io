@@ -1,0 +1,151 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<title>WM Visualizers</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="shortcut icon" type="image/x-icon" href="media/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+
+		<script src="js/jquery-3.1.1.min.js"></script>
+		<script src="bootstrap/js/bootstrap.js"></script>
+		<script src="js/typed.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" href="css/visualizerStyle.css">
+
+	</head>
+
+	<body>
+
+		<nav class="navbar">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navCollapse" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html"></a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="navCollapse">
+					<ul class="nav navbar-nav">
+						<li><a href="gameengine.html">3D Game Engine</a></li>
+						<li><a href="babe.html">Bar Ain't Big Enough</a></li>
+						<li><a href="visualizerproject.html">Visualizers</a></li>
+						<li><a href="media/William%20G%20Montgomery%20Resum%C3%A9.pdf">Resum&eacute;</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<main>
+			<h2 id="title" class="themeText"></h2>
+
+			<div class="container-fluid">
+				<div class="row well">
+					<div class="col-sm-6 col-xs-12" id="vidContainer">
+						<iframe src="https://www.youtube.com/embed/8SCDtfVm_5k" 
+								frameborder="0" 
+								allowfullscreen>
+						</iframe>
+					</div>
+					<div class="col-sm-6 col-xs-12">
+						<p class="themeText mainText">The point of this project was to utilize both my Vector Graphic skills I learned from a course and my enjoyment of making music visualizers. <br> In this video, the DJ logo and the Umbrella pole are vector graphics I made in Illustrator, while the other effects were created within Magic Music Visuals.</p>
+					</div>
+				</div>
+				<p class="themeText mainText">You can view the full project write-up <a href="media/Project%208%20Presentation%20PDF.pdf">here</a>.<br>
+					Music Used: <br>
+					<a href= "https://www.youtube.com/watch?v=90fRR8vHoM0">Mura Masa - Miss You</a>
+				</p>
+
+				<p class="themeText mainText">
+					Below is a collection of other vizualizers I've created in my spare time. <br> The base videos/gifs that are layered on are <a href="https://vimeo.com/channels/beeple">free and open source</a>, but the process of syncing and all other effects were created by myself.</p>
+			</div>
+
+			<div id="myCarousel" class="carousel slide">
+
+				<!-- Wrapper for slides -->
+				<div class="carousel-inner" role="listbox">
+					<div class="item active">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/R2Dank4U.mp4" type="video/mp4">
+						</video>
+					</div>
+
+					<div class="item">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/TigerMane.mp4" type="video/mp4">
+						</video>
+					</div>
+
+					<div class="item">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/Scratch.mp4" type="video/mp4">
+						</video>
+					</div>
+
+					<div class="item">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/ATAT.mp4" type="video/mp4">
+						</video>
+					</div>
+
+					<div class="item">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/GifNinja.mp4" type="video/mp4">
+						</video>
+					</div>
+				</div>
+
+				<!-- Left and right controls -->
+				<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev" onclick='pauseAll()'>
+					<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a>
+				<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next" onclick='pauseAll()'>
+					<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div>
+
+			<div class="themeText mainText">
+				Music Used:
+				<ul class="themeText">
+					<li><a href= "https://soundcloud.com/iamtchami/tchami-siaw">Tchami - SIAW</a></li>
+					<li><a href= "https://soundcloud.com/blackcollective/favela">Tuslo - Favela</a></li>
+					<li><a href= "https://soundcloud.com/inspected/skope-sillouhette">Skope - Silhouette</a></li>
+					<li><a href= "https://soundcloud.com/nightowlcollective/zuu-music-ne-pas-soumettre">ZUU Music - Ne Pas Soumettre</a></li>
+				</ul>
+			</div>
+
+		</main>
+
+	</body>
+
+	<script type="text/javascript">
+		var vidArray;
+		$(document).ready(function() 
+						  {
+			$("#title").typed({
+				strings: ["Visualizer Project and Gallery"],
+				typeSpeed: 0.2
+			});
+
+			vidArray = document.getElementsByTagName("video");
+			vidArray = Array.from(vidArray);
+		});
+
+		function pauseAll()
+		{
+			vidArray.forEach(function(element) {
+				element.pause();
+			});
+		}
+
+		$('.carousel').carousel({
+			interval: false
+		}); 
+	</script>
+</html>

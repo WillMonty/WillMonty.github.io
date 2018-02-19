@@ -1,94 +1,89 @@
 <!doctype html>
 <html lang="en">
 
-<head>
-<title>William Montgomery Game Development</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="description" content="William Montgomery Portfolio Website">
-<meta name="keywords" content="William Montgomery, Game Development, WillMonty">
-<link rel="shortcut icon" type="image/x-icon" href="media/favicon.ico">
-<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+	<head>
+		<title>William Montgomery Game Development</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="description" content="William Montgomery Portfolio Website">
+		<meta name="keywords" content="William Montgomery, Game Development, WillMonty">
+		<link rel="shortcut icon" type="image/x-icon" href="media/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
 
-<script src="js/jquery-3.1.1.min.js"></script>
-<script src="bootstrap/js/bootstrap.js"></script>
-<script src="js/typed.js"></script>
-    
-<link rel="stylesheet" type="text/css" href="css/styles.css">
-<link rel="stylesheet" type="text/css" href="css/indexStyle.css">
+		<script src="js/jquery-3.1.1.min.js"></script>
+		<script src="bootstrap/js/bootstrap.js"></script>
+		<script src="js/typed.js"></script>
 
-</head>
-    
-<body>
-    
-    <nav class="navbar">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navCollapse" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="index.html"></a>
-        </div>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" href="css/indexStyle.css">
 
-        <div class="collapse navbar-collapse" id="navCollapse">
-          <ul class="nav navbar-nav">
-			<li><a href="gameengine.html">3D Game Engine</a></li>
-            <li><a href="visualizerproject.html">Visualizer Project<span class="sr-only">(current)</span></a></li>
-            <li><a href="visualizergallery.html">Visualizer Gallery</a></li>
-            <li><a href="asteroids.html">Asteroids</a></li>
-            <li><a href="media/William%20G%20Montgomery%20Resum%C3%A9.pdf">Resum&eacute;</a></li> 
-          </ul>
-        </div>
-      </div>
-    </nav>
-    
-    <main>
-        <div class="centerWrap container-fluid">
-            <div class="row">
-				<script src="//platform.linkedin.com/in.js" type="text/javascript"></script>
-<script type="IN/MemberProfile" data-id="https://www.linkedin.com/in/william-g-montgomery" data-format="hover" data-related="false" data-text="William Montgomery"></script>
-                <div id="photoContainer">
-                    <img id="profilePic" src="media/profilepic.JPG" alt="A picture of me" class="img-thumbnail">
-                </div>
-            </div>
-        </div>
-		
-        <div id="introContainer">
-            <p id="intro">My name is William Montgomery and these are my projects.</p>
-        </div>
-        
-        <div class="container-fluid">
-            <div class="row">
-				<div class="col-sm-3 col-xs-6 projColumn">
-                    <div class="hoverGif" id="engine" onclick="parent.location = 'gameengine.html'"></div>
-                </div>
-                <div class="col-sm-3 col-xs-6 projColumn">
-                    <div class="hoverGif" id="visProj" onclick="parent.location = 'visualizerproject.html'"></div>
-                </div>
-                <div class="col-sm-3 col-xs-6 projColumn">
-                    <div class="hoverGif" id="otherVis"
-                    onclick="parent.location = 'visualizergallery.html'"></div>
-                </div>
-                <div class="col-sm-3 col-xs-6 projColumn">
-                    <div class="hoverGif" id="asteroids"
-                    onclick="parent.location = 'asteroids.html'"></div>
-                </div>
-            </div>
-		</div>
-    </main>
+	</head>
 
-</body>
+	<body>
 
-<script type="text/javascript">
-$(document).ready(function() 
-{
-    showUnder();
-    $("#intro").typed({
-        strings: ["My name is William Montgomery and these are my projects."],
-        typeSpeed: 0
-    });
-});
-</script>
+		<nav class="navbar">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navCollapse" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html"></a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="navCollapse">
+					<ul class="nav navbar-nav">
+						<li><a href="gameengine.html">3D Game Engine</a></li>
+						<li><a href="babe.html">Bar Ain't Big Enough</a></li>
+						<li><a href="visualizers.html">Visualizers</a></li>
+						<li><a href="media/William%20G%20Montgomery%20Resum%C3%A9.pdf">Resum&eacute;</a></li> 
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<main>
+			<div class="centerWrap container-fluid">
+				<div class="row">
+					<a href="https://www.linkedin.com/in/william-g-montgomery/">Find me on LinkedIn</a>
+					<div id="photoContainer">
+						<img id="profilePic" src="media/profilepic.JPG" alt="A picture of me" class="img-thumbnail">
+					</div>
+				</div>
+			</div>
+
+			<div id="introContainer">
+				<p id="intro">My name is William Montgomery and these are my projects.</p>
+			</div>
+
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-4 col-xs-6 projColumn">
+						<div class="hoverGif" id="engine" onclick="parent.location = 'gameengine.html'"></div>
+					</div>
+					<div class="col-sm-4 col-xs-6 projColumn">
+						<div class="hoverGif" id="babe"
+							 onclick="parent.location = 'babe.html'"></div>
+					</div>
+					<div class="col-sm-4 col-xs-6 projColumn">
+						<div class="hoverGif" id="visualizer"
+							 onclick="parent.location = 'visualizers.html'"></div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+	</body>
+
+	<script type="text/javascript">
+		$(document).ready(function() 
+						  {
+			showUnder();
+			$("#intro").typed({
+				strings: ["My name is William Montgomery and these are my projects."],
+				typeSpeed: 0
+			});
+		});
+	</script>
 </html>

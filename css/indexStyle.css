@@ -1,48 +1,48 @@
 #profilePic
 {
-    display:block;
+	display:block;
 	margin: auto;
-    width: 220px;
-    height: 259px;
+	width: 220px;
+	height: 259px;
 }
 
 .row
 {
-    margin-bottom: 2em;
+	margin-bottom: 2em;
 }
 
 .centerWrap
 {
-    width: 100%;
-    margin: auto;
-    text-align: center;
+	width: 100%;
+	margin: auto;
+	text-align: center;
 }
 
 #introContainer
 {
-    margin-top: 1em;
-    height: 9em;
+	margin-top: 1em;
+	height: 9em;
 }
 
 #intro
 {
-    text-align: center;
-    font-family: "Courier", monospace;
-    font-size: 3em;
+	text-align: center;
+	font-family: "Courier", monospace;
+	font-size: 3em;
 }
 
 .typed-cursor
 {
-    opacity: 0;
+	opacity: 0;
 }
 
 .hoverGif
 {
-    width: 28em;
-    height: 28em;
-    border: 3px solid black;
-    margin-left: auto;
-    margin-right: auto;
+	width: 28em;
+	height: 28em;
+	border: 3px solid black;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .hoverGif:hover
@@ -52,121 +52,120 @@
 
 #engine
 {
-    background: url("../media/gifs/engineStill.jpg");
-    background-size: cover;
+	background: url("../media/gifs/engineStill.jpg");
+	background-size: cover;
 }
 
 #engine:hover
 {
-    background: url("../media/gifs/engine.gif");
-    background-size: cover;
+	background: url("../media/gifs/engine.gif");
+	background-size: cover;
 }
 
 
 #visProj
 {
-    background: url("../media/gifs/visualizerProjectStill.jpg");
-    background-size: cover;
+	background: url("../media/gifs/visualizerProjectStill.jpg");
+	background-size: cover;
 }
 
 #visProj:hover
 {
-    background: url("../media/gifs/visualizerProject.gif");
-    background-size: cover;
-}
-
-#otherVis
-{
-    background: url("../media/gifs/R2Still.jpg");
+	background: url("../media/gifs/visualizerProject.gif");
 	background-size: cover;
-    background-position: center;
 }
 
-#otherVis:hover
+#visualizer
 {
-    background: url("../media/gifs/R2.gif");
-    background-size: cover;
-    background-position: center;
+	background: url("../media/gifs/R2Still.jpg");
+	background-size: cover;
+	background-position: center;
 }
 
-#asteroids
+#visualizer:hover
 {
-    background: url("../media/gifs/asteroidStill.jpg");
-    background-size: cover;
-    background-position: center;
+	background: url("../media/gifs/R2.gif");
+	background-size: cover;
+	background-position: center;
 }
 
-#asteroids:hover
+#babe
 {
-    background: url("../media/gifs/asteroids.gif");
-    background-size: cover;
-    background-position: center;
+	background: url("../media/gifs/babeStill.jpg");
+	background-size: cover;
+	background-position: center;
+}
+
+#babe:hover
+{
+	background: url("../media/gifs/babe.gif");
+	background-size: cover;
+	background-position: center;
 }
 
 @media only screen and (min-width: 300px) and (max-width: 699px)
 {
-    #profilePic
-    {
-        width: 169px;
-        height: 209px;
-        float: none;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .hi
-    {
-        font-size: 8em;
-        text-align: right;
-        width: 50%;
-        margin: auto;
-        float: none;
-    }
-    
-    #introContainer
-    {
-        margin-top: 0em;
-        height: 10em;
-    }
-    
-    #intro
-    {
-        font-size: 1.5em;
-    }
-    
-    .hoverGif
-    {
-        width: 10em;
-        height: 10em;
-        margin-bottom: 1em;
-    }
-    
-    #asteroids
-    {
-        margin-left: auto;
-        margin-right: auto;
+	#profilePic
+	{
+		width: 169px;
+		height: 209px;
+		float: none;
+		margin-left: auto;
+		margin-right: auto;
+	}
 
-    }
+	.hi
+	{
+		font-size: 8em;
+		text-align: right;
+		width: 50%;
+		margin: auto;
+		float: none;
+	}
+
+	#introContainer
+	{
+		margin-top: 0em;
+		height: 10em;
+	}
+
+	#intro
+	{
+		font-size: 1.5em;
+	}
+
+	.hoverGif
+	{
+		width: 10em;
+		height: 10em;
+		margin-bottom: 1em;
+	}
+
+	#babe
+	{
+		margin-left: auto;
+		margin-right: auto
+	}
 }
 
 @media only screen and (min-width: 700px) and (max-width: 1425px)
 {
-    #introContainer
-    {
-        height: 10em;
-    }
-    
-    #intro
-    {
-        font-size: 2em;
-    }
-    
-    .hoverGif
-    {
-        width: 16em;
-        height: 16em;
-        
-    }
+	#introContainer
+	{
+		height: 10em;
+	}
+
+	#intro
+	{
+		font-size: 2em;
+	}
+
+	.hoverGif
+	{
+		width: 16em;
+		height: 16em;
+
+	}
 }
 
 @keyframes blink{

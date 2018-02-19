@@ -1,0 +1,74 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<title>WM BABE</title>
+		<link rel="shortcut icon" type="image/x-icon" href="media/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+		<script src="js/jquery-3.1.1.min.js"></script>
+		<script src="bootstrap/js/bootstrap.js"></script>
+		<script src="js/typed.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" href="css/babeStyle.css">
+
+
+	</head>
+
+	<body>
+
+		<nav class="navbar">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navCollapse" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html"></a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="navCollapse">
+					<ul class="nav navbar-nav">
+						<li><a href="gameengine.html">3D Game Engine</a></li>
+						<li><a href="babe.html">Bar Ain't Big Enough</a></li>
+						<li><a href="visualizers.html">Visualizers</a></li>
+						<li><a href="media/William%20G%20Montgomery%20Resum%C3%A9.pdf">Resum&eacute;</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<main>
+			<h2 id="title" class="themeText"></h2>
+
+			<div class="container-fluid">
+				<div class="row well">
+					<div class="col-sm-6 col-xs-12" id="vidContainer">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/babe.mp4" type="video/mp4">
+						</video>
+					</div>
+					<div class="col-sm-6 col-xs-12">
+						<p class="themeText mainText">Bar ain't big enough is a 4-player fighting game themed around a Western Bar Brawl. The game was made in Unity by a team of five.<br><br>
+							I implemented the throwing system, drinking mechanic, and xbox controller functionality. I also created all of the environment and item art as well as all of the sound effects in the game.
+						</p>
+					</div>
+				</div>
+			</div>
+		</main>
+
+	</body>
+
+	<script type="text/javascript">
+		$(document).ready(function() 
+						  {
+			$("#title").typed({
+				strings: ["Bar Ain't Big Enough"],
+				typeSpeed: 0.2
+			});
+		});
+	</script>
+</html>

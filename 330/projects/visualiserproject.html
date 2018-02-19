@@ -1,410 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>Will & Sanketh Visualizer</title>
-        <link rel="stylesheet" type="text/css" href="bootstrap/bootstrap.css">
-        <script src="bootstrap/jquery-3.1.1.min.js"></script>
-        <script src="bootstrap/bootstrap.js"></script>
-        <style>
-            body 
-            {
-                background: #474d56;
-                font-family: tahoma, verdana, sans serif;
-            }
-
-            canvas 
-            {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-                box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
-                background: black;
-            }
-
-            #trackControls
-            {
-                margin-left: auto;
-                margin-right: auto;
-                margin-top: 2em;
-                text-align: center;
-            }
-
-            #trackControls > *
-            {
-                margin-right: 1em;
-                vertical-align:top;
-            }
-
-            #trackSelect
-            {
-                height: 2.5em;
-            }
-
-            label
-            {
-                color: white;
-                font-size: 16pt;
-            }
-
-            p
-            {
-                text-align: center;
-                font-size: 1.5em;
-                color: white;
-                margin-top: 1em;
-            }
-
-            #vid
-            {
-                visibility: hidden;
-            }
-        </style>
-        <script type="text/javascript" src="dat.gui.js"></script>
-        <script>
-            // An IIFE ("Iffy")
-            (function(){
-                "use strict";
-
-                let NUM_SAMPLES = 512;
-                let audioCtx, analyserNode, convolverNode, sourceNode;
-                let canvas, ctx;
-                let audioElement;
-                let videoElement, videoSourceElement;
-                let defaultSong = 'media/audio/Audio Test.wav';
-
-                let bassPercent = 0;
-
-                //Dat gui controls object
-                let controlFunc = function()
-                {
-                    this.invert = false;
-                    this.videosource = 'media/ninja.mp4';
-                    this.reverb = false;
-                    this.zoomAmount = 15;
-                    this.speedFactor = 1.5;
-                    this.circleSize = 100;
-                }
-                let controls = new controlFunc();
-
-                function init(){
-
-                    // set up canvas stuff
-                    canvas = document.querySelector('canvas');
-                    ctx = canvas.getContext("2d");
-                    videoElement = document.getElementById('vid');
-                    videoSourceElement = document.getElementById('vidsource');
-
-                    // get reference to <audio> element on page
-                    audioElement = document.querySelector('audio');
-
-                    // call our helper function and get an analyser node
-                    analyserNode = createWebAudioContextAndNodes(audioElement);
-
-                    // get sound track <select> and Full Screen button working
-                    setupUI();
-
-                    // load and play default sound into audio element
-                    playStream(audioElement,defaultSong);
-
-                    // start animation loop
-                    update();
-                }
-
-
-                function createWebAudioContextAndNodes(audioElement) {
-                    // create new AudioContext
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext);
-
-                    // create an analyser node
-                    analyserNode = audioCtx.createAnalyser();
-
-                    //create convolver node
-                    convolverNode = audioCtx.createConvolver();
-
-                    // fft stands for Fast Fourier Transform
-                    analyserNode.fftSize = NUM_SAMPLES;
-
-
-                    // grab reverb impulse via XHR for convolver node
-                    let soundSource;
-                    let ajaxRequest = new XMLHttpRequest();
-                    ajaxRequest.open('GET', 'media/impulse.ogg', true);
-                    ajaxRequest.responseType = 'arraybuffer'; 
-                    //Get file as an array to be decoded
-
-                    ajaxRequest.onload = function() {
-                        let audioData = ajaxRequest.response;
-                        audioCtx.decodeAudioData(audioData, function(buffer) {
-                            convolverNode.buffer = buffer;
-                        }, function(e){"Error with decoding audio data" + e.err});
-                    }
-
-                    ajaxRequest.send(); //Send request to be loaded with above function
-
-                    // this is where we hook up the <audio> element to the analyserNode
-                    sourceNode = audioCtx.createMediaElementSource(audioElement); 
-                    sourceNode.connect(analyserNode);
-
-                    // here we connect to the destination i.e. speakers
-                    analyserNode.connect(audioCtx.destination);
-
-                    return analyserNode;
-                }
-
-                function setupUI(){
-
-                    //Set up dat.GUI
-                    let gui = new dat.GUI();
-                    let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Worm: 'media/worm.mp4',}).name('Video Source');
-                    let reverbGUI = gui.add(controls, 'reverb').name('Reverb');
-                    let invertGUI = gui.add(controls, 'invert').name('Invert');
-                    let zoomGUI = gui.add(controls, 'zoomAmount', 0, 100).name('Zoom Amount');
-                    let vidSpeedGUI = gui.add(controls, 'speedFactor', 0, 3).name('Video Max Speed');
-                    let circleSizeGUI = gui.add(controls, 'circleSize', 10, 300).name('Circle Radius');
-
-                    reverbGUI.onChange(function(value) {
-                        if(value) //Reconnect nodes with convolver if reverb checked
-                        {
-                            sourceNode.connect(convolverNode);
-                            convolverNode.connect(analyserNode);
-                            analyserNode.connect(audioCtx.destination);
-                        }
-                        else
-                        {
-                            convolverNode.disconnect();			
-                        }
-                    });
-
-                    videoGUI.onChange(function(value) {
-                        videoSourceElement.setAttribute('src', value);
-                        videoElement.load();
-                        videoElement.play();
-                    });
-
-
-                    //Set up audio section
-                    document.querySelector("#trackSelect").onchange = function(e){
-                        playStream(audioElement,e.target.value);
-                        let tracks = document.querySelector("#trackSelect");
-                        document.querySelector('#status').innerHTML = "Now Playing: " + tracks.options[tracks.selectedIndex].text;
-                    };
-
-                    document.querySelector("#fsButton").onclick = function(){
-                        requestFullscreen(canvas);
-                    };
-
-                }
-
-                function playStream(audioElement,path){
-                    audioElement.src = path;
-                    audioElement.play();
-                    audioElement.volume = 1;
-                }
-
-                function update() { 
-                    // this schedules a call to the update() method in 1/60 seconds
-                    requestAnimationFrame(update);
-
-                    //If NUM_SAMPLES (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, the third is 344Hz.
-                    // create a new array of 8-bit integers (0-255)
-                    let timeData = new Uint8Array(NUM_SAMPLES/2);
-                    let freqData = new Uint8Array(analyserNode.frequencyBinCount); 
-
-                    // populate the array with the frequency data
-                    // notice these arrays can be passed "by reference" 
-                    analyserNode.getByteTimeDomainData(timeData);
-                    analyserNode.getByteFrequencyData(freqData);
-
-                    // DRAW!
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-                    //Draw video
-                    //Zoom destination based on percentage of bass
-                    //(image, source x, source y, source width, source height, dest. x, dest. y, dest width, dest height)
-                    let maxZoom = controls.zoomAmount * 3; //3 pixel minimum at 1%
-
-                    if(bassPercent < 0.79) //Clamp bass percent for zooming
-                    {
-                        bassPercent = 0;
-                    }
-
-                    ctx.drawImage(videoElement,
-                                  0, 0,
-                                  videoElement.videoWidth, videoElement.videoHeight,
-                                  0 - (maxZoom * bassPercent), 0 - ((maxZoom * 0.66) * bassPercent),
-                                  canvas.width + ((maxZoom * 2) * bassPercent), canvas.height + (maxZoom * bassPercent)
-                                 );
-
-                    //Bar vars
-                    ctx.lineWidth = 5;
-                    let pixelsPerSection = canvas.width/freqData.length;
-                    let maxHeight = 300;
-                    let minHeight = 0;
-                    let lastLine = 0;
-
-                    //Waveform Circle vars
-                    let maxDistance = 100;
-                    let originX = canvas.width/2;
-                    let originY = canvas.height/2;
-                    let currAngle = 0;
-                    let anglePerSection = (2 * Math.PI)/(timeData.length - 20);
-                    let lastX = controls.circleSize;
-                    let lastY = -5;
-
-                    //Bass detection vars
-                    let bassSum = 0;
-                    let bassBins = 5;
-
-                    // loop through the data and draw!
-                    for(let i = 10; i < freqData.length; i++) 
-                    {
-                        let freqPercent = freqData[i]/255;
-                        let timePercent = (timeData[i] - 128)/100;
-
-                        //Bass detection
-                        if(i < 10 + bassBins)
-                        {
-                            bassSum += freqData[i];		
-                        }
-
-                        //Lines
-                        let currHeight = maxHeight * freqPercent;
-
-                        ctx.strokeStyle = 'rgb(' + freqData[i] + ',255,0)';
-
-                        ctx.beginPath();
-                        ctx.moveTo(lastLine, canvas.height);
-                        ctx.lineTo(lastLine, canvas.height - currHeight);
-                        ctx.stroke();
-                        ctx.closePath();
-                        lastLine = lastLine + pixelsPerSection;
-
-                        //Waveform Circle
-                        if(i < freqData.length - 10)
-                        {
-                            
-                            let currX = Math.cos(currAngle) * (controls.circleSize + (maxDistance * timePercent));
-                            let currY = Math.sin(currAngle) * (controls.circleSize + (maxDistance * timePercent));
-
-                            ctx.strokeStyle = 'rgb(' + timeData[i] + ',0,' + (255 - timeData[i]) + ')';
-
-                            ctx.beginPath();
-                            ctx.moveTo(originX + lastX, originY + lastY);
-                            ctx.lineTo(originX + currX,  originY + currY);
-                            ctx.stroke();
-                            ctx.closePath();
-                            
-                            currAngle += anglePerSection;
-                            lastX = currX;
-                            lastY = currY;                       
-                            
-                        }
-                        
-                    }
-
-                    manipulatePixels();
-
-                    bassPercent = (bassSum/bassBins)/255;
-
-                    let currPlaySpeed = (controls.speedFactor * bassPercent).toFixed(2);
-
-                    if(currPlaySpeed < 0.09)
-                    {
-                        currPlaySpeed = 0;			
-                    }
-
-                    videoElement.playbackRate = currPlaySpeed; //Round to remove error with playbackRate range
-                }
-
-                function manipulatePixels()
-                {
-                    //Get all of the rgba pixel data of the canvas by grabbing the
-                    //ImageDataObject
-                    let imageData = ctx.getImageData(0,0,canvas.width, canvas.height);
-
-                    //imageData.data is an 8-bit typed array - values range from 0-255
-                    //imageData.data contains 4 values per pixel: 4 x canvas.width x canvas.height = 1024000 values!
-                    let data = imageData.data;
-                    let length = data.length;
-                    let width = imageData.width;
-
-                    //Iterate through each pixel. Step by 4 to use 1 pixel per iteration
-                    //data[i] = red, data[i+1] = green, data[i+2] = blue, data[i+3] = alpha
-
-                    for(let i = 0; i < length; i += 4)
-                    {
-                        if(controls.invert)
-                        {
-                            let red = data[i], green = data[i+1], blue = data[i+2];
-                            data[i] = 255 - red;
-                            data[i+1] = 255 - green;
-                            data[i+2] = 255 - blue;
-                        }
-                    }
-
-                    //Put modified data back on the canvas
-                    ctx.putImageData(imageData, 0 , 0);
-                }
-
-                // HELPER
-                function makeColor(red, green, blue, alpha){
-                    var color='rgba('+red+','+green+','+blue+', '+alpha+')';
-                    return color;
-                }
-
-                // FULL SCREEN MODE
-                function requestFullscreen(element) {
-                    if (element.requestFullscreen) {
-                        element.requestFullscreen();
-                    } else if (element.mozRequestFullscreen) {
-                        element.mozRequestFullscreen();
-                    } else if (element.mozRequestFullScreen) { // camel-cased 'S' was changed to 's' in spec
-                        element.mozRequestFullScreen();
-                    } else if (element.webkitRequestFullscreen) {
-                        element.webkitRequestFullscreen();
-                    }
-                    // .. and do nothing if the method is not supported
-                };
-
-
-                window.addEventListener("load",init);
-            }());
-
-        </script>
-    </head>
-    <body>
-        <canvas id="canvas" width="1200" height="800"></canvas>
-        <div id="trackControls">
-            <label>Track:</label>
-            <select id="trackSelect">
-                <option value="media/audio/Audio Test.wav">Audio Test</option>
-                <option value="media/audio/FLEXLIKEOUU.mp3">LIKEOUU</option>
-                <option value="media/audio/New Adventure Theme.mp3">New Adventure Theme</option>
-                <option value="media/audio/Peanuts Theme.mp3">Peanuts Theme</option>
-                <option value="media/audio/The Picard Song.mp3">The Picard Song</option>
-            </select>
-            <audio controls loop></audio>
-            <button class='btn btn-light'id="fsButton">Go Full Screen</button><br>
-        </div>
-
-        <!--<div class="dropdown">
-<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-Dropdown button
-</button>
-<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-<a class="dropdown-item" href="#">Action</a>
-<a class="dropdown-item" href="#">Another action</a>
-<a class="dropdown-item" href="#">Something else here</a>
-</div>
-</div>-->
-
-        <p id="status">Now Playing: Audio Test</p>
-
-        <!-- This video element is hidden and instead drawn in canvas -->
-        <video autoplay loop id="vid">
-            <source id='vidsource' src="media/ninja.mp4" type="video/mp4">
-        </video>
-
-    </body>
+	<head>
+		<meta charset="utf-8" />
+		<title>Will & Sanketh Visualizer</title>
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400" rel="stylesheet">
+		<style>
+			html
+			{
+				overflow: hidden;
+			}
+
+			body 
+			{
+				font-family: 'Roboto', sans-serif;
+				margin: 0;
+				padding: 0;
+			}
+
+			#canvas 
+			{
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+				box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+				background: black;
+			}
+
+			#backCanvas
+			{
+				background: #474d56;
+				position: absolute;
+				z-index: -1;
+			}
+
+			#trackControls
+			{
+				margin-left: auto;
+				margin-right: auto;
+				margin-top: 2em;
+				text-align: center;
+			}
+
+			#trackControls > *
+			{
+				margin-right: 1em;
+				vertical-align:top;
+			}
+
+			#trackSelect, #fsButton
+			{
+				height: 2.5em;
+			}
+
+			label
+			{
+				color: white;
+				font-size: 16pt;
+			}
+
+			p
+			{
+				text-align: center;
+				font-size: 1.5em;
+				color: white;
+				margin-top: 1em;
+			}
+
+			#vid
+			{
+				visibility: hidden;
+			}
+		</style>
+		<script type="text/javascript" src="dat.gui.js"></script>
+		<script src="js/bouncingCircles.js"></script>
+		<script>
+			"use strict";
+			let NUM_SAMPLES = 512;
+			let audioCtx, analyserNode, convolverNode, sourceNode;
+			let canvas, ctx, backCanvas, backCtx;
+			let audioElement;
+			let videoElement, videoSourceElement;
+			let bassPercent = 0;
+
+			//Dat gui controls object
+			let controlFunc = function()
+			{
+				this.invert = false;
+				this.videosource = 'media/ninja.mp4';
+				this.reverb = false;
+				this.zoomAmount = 15;
+				this.speedFactor = 1.5;
+				this.waveSize = 100;
+				this.clearback = true;
+				this.waveX = 600;
+				this.waveY = 400;
+				this.barHeight = 200;
+			}
+			let controls = new controlFunc();
+
+			// An IIFE ("Iffy")
+			(function(){
+				function init(){
+
+					// set up canvas stuff
+					canvas = document.getElementById('canvas');
+					ctx = canvas.getContext("2d");
+					backCanvas = document.getElementById('backCanvas');
+					backCtx = backCanvas.getContext("2d");
+					videoElement = document.getElementById('vid');
+					videoSourceElement = document.getElementById('vidsource');
+
+					circleInit();
+
+					// get reference to <audio> element on page
+					audioElement = document.querySelector('audio');
+
+					let defaultSong = 'media/audio/The Weapon.mp3';
+
+					// call our helper function and get an analyser node
+					analyserNode = createWebAudioContextAndNodes(audioElement);
+
+					// get sound track <select> and Full Screen button working
+					setupUI();
+
+					// load and play default sound into audio element
+					playStream(audioElement,defaultSong);
+
+					// start animation loop
+					update();
+				}
+
+
+				function createWebAudioContextAndNodes(audioElement) {
+					// create new AudioContext
+					audioCtx = new (window.AudioContext || window.webkitAudioContext);
+
+					// create an analyser node
+					analyserNode = audioCtx.createAnalyser();
+
+					//create convolver node
+					convolverNode = audioCtx.createConvolver();
+
+					// fft stands for Fast Fourier Transform
+					analyserNode.fftSize = NUM_SAMPLES;
+
+
+					// grab reverb impulse via XHR for convolver node
+					let soundSource;
+					let ajaxRequest = new XMLHttpRequest();
+					ajaxRequest.open('GET', 'media/impulse.ogg', true);
+					ajaxRequest.responseType = 'arraybuffer'; 
+					//Get file as an array to be decoded
+
+					ajaxRequest.onload = function() {
+						let audioData = ajaxRequest.response;
+						audioCtx.decodeAudioData(audioData, function(buffer) {
+							convolverNode.buffer = buffer;
+						}, function(e){"Error with decoding audio data" + e.err});
+					}
+
+					ajaxRequest.send(); //Send request to be loaded with above function
+
+					// this is where we hook up the <audio> element to the analyserNode
+					sourceNode = audioCtx.createMediaElementSource(audioElement); 
+					sourceNode.connect(analyserNode);
+
+					// here we connect to the destination i.e. speakers
+					analyserNode.connect(audioCtx.destination);
+
+					return analyserNode;
+				}
+
+				function setupUI(){
+
+					//Set up dat.GUI
+					let gui = new dat.GUI();
+					let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Worm: 'media/worm.mp4', ThinkingSpinner: 'media/thinking spinner.mp4', Stormtrooper: 'media/stormtrooper.mp4'}).name('Video Source');
+					let reverbGUI = gui.add(controls, 'reverb').name('Reverb');
+					let invertGUI = gui.add(controls, 'invert').name('Invert');
+					let clearbackGUI = gui.add(controls, 'clearback').name('Clear Back');
+					let zoomGUI = gui.add(controls, 'zoomAmount', 0, 100).name('Zoom Amount');
+					let vidSpeedGUI = gui.add(controls, 'speedFactor', 0, 3).name('Max Speed');
+					let waveSizeGUI = gui.add(controls, 'waveSize', 10, 300).name('Waveform Radius');
+					let waveXGUI = gui.add(controls, 'waveX', 0, canvas.width).name('Waveform X');
+					let waveYGUI = gui.add(controls, 'waveY', 0, canvas.height).name('Waveform Y');
+					let barHeightGUI = gui.add(controls, 'barHeight', 0 , 400).name('Bar Height');
+
+					//Reconnect nodes with convolver if reverb checked
+					reverbGUI.onChange(function(value) {
+						if(value)
+						{
+							sourceNode.connect(convolverNode);
+							convolverNode.connect(analyserNode);
+							analyserNode.connect(audioCtx.destination);
+						}
+						else
+						{
+							convolverNode.disconnect();			
+						}
+					});
+
+					//Reload video on video change
+					videoGUI.onChange(function(value) {
+						videoSourceElement.setAttribute('src', value);
+						videoElement.load();
+						videoElement.play();
+					});
+
+
+					//Set up audio section
+					document.querySelector("#trackSelect").onchange = function(e){
+						playStream(audioElement,e.target.value);
+						let tracks = document.querySelector("#trackSelect");
+						document.querySelector('#status').innerHTML = "Now Playing: " + tracks.options[tracks.selectedIndex].text;
+					};
+
+				}
+				
+				//Plays the audio currently selected
+				function playStream(audioElement,path){
+					audioElement.src = path;
+					audioElement.play();
+					audioElement.volume = 1;
+				}
+
+				function update() { 
+					// this schedules a call to the update() method in 1/60 seconds
+					requestAnimationFrame(update);
+
+					//If NUM_SAMPLES (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, the third is 344Hz.
+					// create a new array of 8-bit integers (0-255)
+					let timeData = new Uint8Array(NUM_SAMPLES/2);
+					let freqData = new Uint8Array(analyserNode.frequencyBinCount); 
+
+					// populate the array with the frequency data
+					// notice these arrays can be passed "by reference" 
+					analyserNode.getByteTimeDomainData(timeData);
+					analyserNode.getByteFrequencyData(freqData);
+					
+					//Clear main canvas
+					ctx.clearRect(0,0,canvas.width,canvas.height);
+					
+					//Clear Back
+					if(controls.clearback)
+					{
+						//Clear back canvas
+						backCtx.clearRect(0,0,backCanvas.width,backCanvas.height)
+
+					}
+
+
+					//3 pixel minimum at 1%
+					let maxZoom = controls.zoomAmount * 3; 
+
+					//Clamp bass percent for zooming
+					if(bassPercent < 0.79)
+					{
+						bassPercent = 0;
+					}
+
+					//Draw video
+					//Zoom destination based on percentage of bass
+					//(image, source x, source y, source width, source height, dest. x, dest. y, dest width, dest height)
+					ctx.drawImage(videoElement,
+								  0, 0,
+								  videoElement.videoWidth, videoElement.videoHeight,
+								  0 - (maxZoom * bassPercent), 0 - ((maxZoom * 0.66) * bassPercent),
+								  canvas.width + ((maxZoom * 2) * bassPercent), canvas.height + (maxZoom * bassPercent)
+								 );
+
+					//Bar vars
+					ctx.lineWidth = 5;
+					let pixelsPerSection = canvas.width/freqData.length;
+					let maxHeight = 200;
+					let lastLine = 0;
+
+					//Waveform Circle vars
+					let maxDistance = 100;
+					let originX = controls.waveX;
+					let originY = controls.waveY;
+					let currAngle = 0;
+					let anglePerSection = (2 * Math.PI)/(timeData.length - 20);
+					let lastX = controls.waveSize;
+					let lastY = -5;
+
+					//Bass detection vars
+					let bassSum = 0;
+					let bassBins = 5;
+
+					// loop through the data and draw!
+					for(let i = 10; i < freqData.length; i++) 
+					{
+						let freqPercent = freqData[i]/255;
+						let timePercent = (timeData[i] - 128)/100;
+
+						//Bass detection
+						if(i < 10 + bassBins)
+						{
+							bassSum += freqData[i];		
+						}
+
+						//Lines
+						let currHeight = controls.barHeight * freqPercent;
+
+						ctx.strokeStyle = 'rgb(0,'+ freqData[i] +',0)';
+
+						ctx.beginPath();
+						ctx.moveTo(lastLine, canvas.height);
+						ctx.lineTo(lastLine, canvas.height - currHeight);
+						ctx.stroke();
+						ctx.closePath();
+						lastLine = lastLine + pixelsPerSection;
+
+						//Waveform Circle
+						if(i < freqData.length - 10)
+						{
+
+							let currX = Math.cos(currAngle) * (controls.waveSize + (maxDistance * timePercent));
+							let currY = Math.sin(currAngle) * (controls.waveSize + (maxDistance * timePercent));
+
+							ctx.strokeStyle = 'rgb(255,' + timeData[i] +',0)';
+
+							ctx.beginPath();
+							ctx.moveTo(originX + lastX, originY + lastY);
+							ctx.lineTo(originX + currX,  originY + currY);
+							ctx.stroke();
+							ctx.closePath();
+
+							currAngle += anglePerSection;
+							lastX = currX;
+							lastY = currY;                       
+
+						}
+
+					}
+
+
+					manipulatePixels();
+
+					bassPercent = (bassSum/bassBins)/255; //Calc bass
+
+					//Bezier Curve
+					backCtx.save();
+
+					backCtx.lineWidth=bassPercent*10;
+					backCtx.strokeStyle='orange';
+
+					let x1 = backCanvas.width/4;
+					let x2 =backCanvas.width/2;
+					let y1=backCanvas.height/2 +(backCanvas.height/2*bassPercent);
+					let y2=backCanvas.height/2 -(backCanvas.height/2*bassPercent);
+
+					backCtx.beginPath();
+					backCtx.moveTo(0, backCanvas.height/2);
+
+					backCtx.bezierCurveTo(x1, y1, x2, y2,
+										  backCanvas.width, backCanvas.height/2);
+
+					backCtx.stroke();
+					backCtx.closePath();
+
+					backCtx.restore();
+
+					//Calc video speed
+					let currPlaySpeed = (controls.speedFactor * bassPercent).toFixed(2);
+
+					if(currPlaySpeed < 0.09)
+					{
+						currPlaySpeed = 0;			
+					}
+
+					videoElement.playbackRate = currPlaySpeed; //Round to remove error with playbackRate range
+
+					//Update the circles on the background canvas
+					//Method in bouncingCircles.js
+					circleUpdate();
+				}
+
+				function manipulatePixels()
+				{
+					//Get all of the rgba pixel data of the canvas by grabbing the
+					//ImageDataObject
+					let imageData = ctx.getImageData(0,0,canvas.width, canvas.height);
+
+					//imageData.data is an 8-bit typed array - values range from 0-255
+					//imageData.data contains 4 values per pixel: 4 x canvas.width x canvas.height = 1024000 values!
+					let data = imageData.data;
+					let length = data.length;
+					let width = imageData.width;
+
+					//Iterate through each pixel. Step by 4 to use 1 pixel per iteration
+					//data[i] = red, data[i+1] = green, data[i+2] = blue, data[i+3] = alpha
+
+					for(let i = 0; i < length; i += 4)
+					{
+						if(controls.invert)
+						{
+							let red = data[i], green = data[i+1], blue = data[i+2];
+							data[i] = 255 - red;
+							data[i+1] = 255 - green;
+							data[i+2] = 255 - blue;
+						}
+					}
+
+					//Put modified data back on the canvas
+					ctx.putImageData(imageData, 0 , 0);
+				}
+
+				window.addEventListener("load",init);
+			}());
+
+		</script>
+	</head>
+	<body>
+		<canvas id="backCanvas" width="1920" height="1080"></canvas>
+		<canvas id="canvas" width="1200" height="800"></canvas>
+		<div id="trackControls">
+			<label>Track:</label>
+			<select id="trackSelect">
+				<option value="media/audio/The Weapon.mp3">The Weapon</option>
+				<option value="media/audio/FLEXLIKEOUU.mp3">LIKEOUU</option>	
+				<option value="media/audio/Its Safe Now.mp3">Its Safe Now </option>
+				<option value="media/audio/Audio Test.wav">Audio Test</option>
+			</select>
+			<audio controls loop></audio><br>
+		</div>
+
+		<p id="status">Now Playing: The Weapon</p>
+
+		<!-- This video element is hidden and instead drawn in canvas -->
+		<video autoplay loop id="vid">
+			<source id='vidsource' src="media/ninja.mp4" type="video/mp4">
+		</video>
+
+	</body>
 </html>

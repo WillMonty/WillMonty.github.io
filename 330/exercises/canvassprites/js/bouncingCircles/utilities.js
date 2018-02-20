@@ -1,5 +1,6 @@
 "use strict";
-function getRandomUnitVector(){
+function getRandomUnitVector() 
+{
 	let x = getRandom(-1,1);
 	let y = getRandom(-1,1);
 	let length = Math.sqrt(x*x + y*y);

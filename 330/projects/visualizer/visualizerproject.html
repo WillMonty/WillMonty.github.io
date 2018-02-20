@@ -75,6 +75,7 @@
 		<script src="js/bouncingCircles.js"></script>
 		<script>
 			"use strict";
+			//Script Variables
 			let NUM_SAMPLES = 512;
 			let audioCtx, analyserNode, convolverNode, sourceNode;
 			let canvas, ctx, backCanvas, backCtx;
@@ -96,9 +97,9 @@
 				this.waveY = 400;
 				this.barHeight = 200;
 			}
+			//Variable adressed to access and add control variables
 			let controls = new controlFunc();
 
-			// An IIFE ("Iffy")
 			(function(){
 				function init(){
 
@@ -107,9 +108,12 @@
 					ctx = canvas.getContext("2d");
 					backCanvas = document.getElementById('backCanvas');
 					backCtx = backCanvas.getContext("2d");
+					
+					//Set up video element
 					videoElement = document.getElementById('vid');
 					videoSourceElement = document.getElementById('vidsource');
 
+					//Initialize circle vars (in bouncing circles)
 					circleInit();
 
 					// get reference to <audio> element on page
@@ -161,11 +165,11 @@
 
 					ajaxRequest.send(); //Send request to be loaded with above function
 
-					// this is where we hook up the <audio> element to the analyserNode
+					//Connect analyzer
 					sourceNode = audioCtx.createMediaElementSource(audioElement); 
 					sourceNode.connect(analyserNode);
 
-					// here we connect to the destination i.e. speakers
+					//Connect to the destination i.e. speakers
 					analyserNode.connect(audioCtx.destination);
 
 					return analyserNode;
@@ -173,7 +177,8 @@
 
 				function setupUI(){
 
-					//Set up dat.GUI
+					//Set up dat.GUI controls
+					//Each control can also be accessed via GUI variable to check for changes.
 					let gui = new dat.GUI();
 					let videoGUI = gui.add(controls, 'videosource', {Ninja: 'media/ninja.mp4', Worm: 'media/worm.mp4', ThinkingSpinner: 'media/thinking spinner.mp4', Stormtrooper: 'media/stormtrooper.mp4'}).name('Video Source');
 					let reverbGUI = gui.add(controls, 'reverb').name('Reverb');
@@ -208,7 +213,7 @@
 					});
 
 
-					//Set up audio section
+					//Set up audio selection box
 					document.querySelector("#trackSelect").onchange = function(e){
 						playStream(audioElement,e.target.value);
 						let tracks = document.querySelector("#trackSelect");
@@ -233,18 +238,16 @@
 					let timeData = new Uint8Array(NUM_SAMPLES/2);
 					let freqData = new Uint8Array(analyserNode.frequencyBinCount); 
 
-					// populate the array with the frequency data
-					// notice these arrays can be passed "by reference" 
+					//Populate arrays with frequency and waveform data
 					analyserNode.getByteTimeDomainData(timeData);
 					analyserNode.getByteFrequencyData(freqData);
 					
 					//Clear main canvas
 					ctx.clearRect(0,0,canvas.width,canvas.height);
 					
-					//Clear Back
+					//Clear back canvas if this control is checked
 					if(controls.clearback)
 					{
-						//Clear back canvas
 						backCtx.clearRect(0,0,backCanvas.width,backCanvas.height)
 
 					}
@@ -260,7 +263,7 @@
 					}
 
 					//Draw video
-					//Zoom destination based on percentage of bass
+					//Zoom destination when bass crosses threshold
 					//(image, source x, source y, source width, source height, dest. x, dest. y, dest width, dest height)
 					ctx.drawImage(videoElement,
 								  0, 0,
@@ -268,6 +271,7 @@
 								  0 - (maxZoom * bassPercent), 0 - ((maxZoom * 0.66) * bassPercent),
 								  canvas.width + ((maxZoom * 2) * bassPercent), canvas.height + (maxZoom * bassPercent)
 								 );
+								//Overly specific numbers keep it at the correct aspect ratio
 
 					//Bar vars
 					ctx.lineWidth = 5;
@@ -291,6 +295,7 @@
 					// loop through the data and draw!
 					for(let i = 10; i < freqData.length; i++) 
 					{
+						//Get amplitude percentage in current bin
 						let freqPercent = freqData[i]/255;
 						let timePercent = (timeData[i] - 128)/100;
 
@@ -315,7 +320,6 @@
 						//Waveform Circle
 						if(i < freqData.length - 10)
 						{
-
 							let currX = Math.cos(currAngle) * (controls.waveSize + (maxDistance * timePercent));
 							let currY = Math.sin(currAngle) * (controls.waveSize + (maxDistance * timePercent));
 
@@ -329,14 +333,12 @@
 
 							currAngle += anglePerSection;
 							lastX = currX;
-							lastY = currY;                       
-
+							lastY = currY;                      
 						}
-
 					}
 
 
-					manipulatePixels();
+					manipulatePixels(); //Do per pixel manipulations
 
 					bassPercent = (bassSum/bassBins)/255; //Calc bass
 
@@ -346,6 +348,7 @@
 					backCtx.lineWidth=bassPercent*10;
 					backCtx.strokeStyle='orange';
 
+					//Move control points based on bass
 					let x1 = backCanvas.width/4;
 					let x2 =backCanvas.width/2;
 					let y1=backCanvas.height/2 +(backCanvas.height/2*bassPercent);
@@ -364,16 +367,17 @@
 
 					//Calc video speed
 					let currPlaySpeed = (controls.speedFactor * bassPercent).toFixed(2);
+					//Round to remove error with playbackRate range
 
 					if(currPlaySpeed < 0.09)
 					{
 						currPlaySpeed = 0;			
 					}
 
-					videoElement.playbackRate = currPlaySpeed; //Round to remove error with playbackRate range
+					videoElement.playbackRate = currPlaySpeed;
 
 					//Update the circles on the background canvas
-					//Method in bouncingCircles.js
+					//In bouncingCircles.js
 					circleUpdate();
 				}
 
@@ -394,6 +398,7 @@
 
 					for(let i = 0; i < length; i += 4)
 					{
+						//Check to invert canvas
 						if(controls.invert)
 						{
 							let red = data[i], green = data[i+1], blue = data[i+2];

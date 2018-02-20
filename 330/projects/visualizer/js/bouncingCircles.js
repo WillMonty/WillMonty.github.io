@@ -22,7 +22,8 @@ function circleUpdate()
 		s.move();
 
 		// check sides and bounce
-		if (s.x <= s.radius || s.x >= backCanvas.width-s.radius){
+		if (s.x <= s.radius || s.x >= backCanvas.width-s.radius)
+		{
 			s.reflectX();
 			s.move();
 		}
@@ -33,7 +34,7 @@ function circleUpdate()
 
 		s.speed = 10 * controls.speedFactor * bassPercent;
 
-		//Make gradient for this circle
+		//Make gradient for this circle. Second color amount based on bass.
 		let grad = ctx.createRadialGradient(s.x, s.y, s.radius, s.x, s.y, (s.radius/1.2 * bassPercent));
 		// draw sprites
 		s.draw(backCtx, grad);
@@ -51,11 +52,17 @@ function createSprites(num=20, radius=20, color="red"){
 		// add properties
 		s.radius = radius;
 		s.color = color;
-		s.x = Math.random() * (backCanvas.width - (radius * 2));
-		s.y = Math.random() * (backCanvas.height - (radius * 2));
 		s.fwd = getRandomUnitVector();
 		s.speed = 1;
-
+		
+		s.x = Math.random() * (backCanvas.width - (radius * 2));
+		s.y = Math.random() * (backCanvas.height - (radius * 2));
+		
+		if(s.x < (radius * 2)) //Fix circles spawning off to the left
+		{
+			s.x = radius * 2;			
+		}
+	
 		//add methods
 		s.draw = function(ctx, gradient){
 			ctx.save();
@@ -63,6 +70,7 @@ function createSprites(num=20, radius=20, color="red"){
 			ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
 			ctx.closePath();
 
+			//Add gradient colors
 			gradient.addColorStop(0, 'white');
 			gradient.addColorStop(1, color);
 

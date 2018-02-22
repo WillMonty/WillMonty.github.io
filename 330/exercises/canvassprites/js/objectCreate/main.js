@@ -11,7 +11,17 @@ init();
 function init(){
     let margin = 50;
     let rect = {left: margin, top: margin, width: screenWidth - margin*2, height: screenHeight-100*2}
-    sprites = sprites.concat(createCircleSprites(10,rect),createSquareSprites(10,rect), createImageSprites(10, rect));
+    sprites = sprites.concat(createCircleSprites(5,rect, 10, 'orange'),
+                             createCircleSprites(5, rect, 15, 'green'),
+                             createSquareSprites(3,rect, 20, 10, 'yellow'),
+                             createSquareSprites(1,rect, 30, 30, 'white'),
+                             createImageSprites(1, rect, 70, 70, 'images/reddit.png'),
+                             createImageSprites(4, rect, 30, 30, 'images/downvote.png'),
+                             createImageSprites(7, rect, 60, 60,
+                             'images/ealogo.png'),
+                             createImageShrinkSprites(10, rect, 70, 70, 10, 'images/money.png'),
+                             createImageShrinkSprites(3, rect, 150, 50, 10, 'images/bf2logo.png')
+                            );
     loop();
 }
 

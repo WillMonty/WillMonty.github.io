@@ -9,12 +9,17 @@ let maxSpeed = 8;
 let deadzone = 0.15;
 let crossRange = 125;
 let animationFPS = 15;
+let revolverDimension = {}; //Bounds of each image in the revolver spritesheet
+revolverDimension.x = 52;
+revolverDimension.y = 56;
+let revolverMargin = 20;
 
 class Cowboy {
 	constructor(pNum) {
 		//Sprite settings
 		this.sprite = new PIXI.Sprite();
 		this.HP = 1;
+		this.ammo = 6;
 		this.sprite.anchor.set(0.5, 0.5);
 		b.addCollisionProperties(this.sprite);
 
@@ -22,6 +27,14 @@ class Cowboy {
 		this.crosshair = new PIXI.Sprite();
 		this.crosshair.anchor.set(0.5, 0.5);
 		this.sprite.addChild(this.crosshair);
+
+		//Make revolver sprite. Will be added to game container by the manager
+		this.revolver = new PIXI.Sprite();
+		//Get texture from cropped portion of revolver
+		this.revolver.texture = new PIXI.Texture(PIXI.loader.resources['revolver'].texture, new PIXI.Rectangle(0,0,revolverDimension.x,revolverDimension.y));
+		this.revolver.scale.x = 1.5;
+		this.revolver.scale.y = 1.5;
+		this.revolver.anchor.set(0.5);
 
 		//Player number and color
 		this.playerNum = pNum;
@@ -35,8 +48,10 @@ class Cowboy {
 			this.sprite.position.x = 100;
 			this.sprite.position.y = app.renderer.height/2;
 			this.lastDirection = 'E';
-			
+
 			this.crosshair.texture = PIXI.loader.resources['white crosshair'].texture;
+
+			this.revolver.position.set(this.revolver.width + revolverMargin, app.renderer.height - this.revolver.height - revolverMargin);
 
 			this.shootSound = new Howl({
 				src: ['./audio/shoot1.mp3']
@@ -50,12 +65,15 @@ class Cowboy {
 
 			this.crosshair.texture = PIXI.loader.resources['black crosshair'].texture;
 
+			this.revolver.position.set(app.renderer.width - this.revolver.width - revolverMargin, app.renderer.height - this.revolver.height - revolverMargin);
+
 			this.shootSound = new Howl({
-				src: ['./audio/shoot2.mp3']
+				src: ['./audio/shoot2.mp3'],
+				volume: 0.7
 			});
 		}
 
-		//Set initial texture
+		//Set initial cowboy texture
 		this.sprite.texture = PIXI.loader.resources[
 			this.color + '_' + this.lastDirection + '_' + 'idle0'
 		].texture;
@@ -81,8 +99,10 @@ class Cowboy {
 		//Audio vars
 		this.reloadSound = new Howl({
 			src: ['./audio/reload.mp3'],
-			volume: 0.5,
-			loop: true
+		});
+
+		this.noAmmoSound = new Howl({
+			src: ['./audio/noammo.mp3'],
 		});
 	}
 
@@ -93,6 +113,13 @@ class Cowboy {
 
 		if (this.gamepad === undefined)
 			return;
+		
+		//Check if the player is dead before updating
+		if(this.HP <= 0){
+			this.crosshair.visible = false;
+			this.sprite.visible = false;
+			return;
+		}
 
 		//Movement
 		if (!this.isShooting) {
@@ -119,12 +146,29 @@ class Cowboy {
 			this.isAiming = true;
 		}
 
-		//Shooting (uses Right Trigger)
-		if (this.gamepad.buttons[7].value > 0.5 && this.lastTriggerState < .3 && this.isAiming) {
+		//Shooting (uses Right Trigger) only works while aiming and not reloading
+		if (this.gamepad.buttons[7].value > 0.3 && this.lastTriggerState < .3 && this.isAiming && !this.reloadSound.playing()) {
 			this.shoot();
-			this.frameNum = 2; //First frame number of the shoot animation
 		}
 		this.lastTriggerState = this.gamepad.buttons[7].value;
+
+		//Reloading
+		if(this.gamepad.buttons[2].pressed && this.ammo < 6){
+			//Only reload if not already reloading
+			if(!this.reloadSound.playing()){
+				this.reloadSound.play();
+				let thisCowboy = this;
+				this.reloadSound.on('end', function(){
+					thisCowboy.ammo = 6;
+					thisCowboy.updateRevolver();
+				});
+			}
+		}
+		
+		//Rotate the revolver sprite while reloading
+		if(this.reloadSound.playing()){
+			this.revolver.rotation -= 0.2;
+		}
 
 		this.animate(delta); //Update sprite texture
 
@@ -175,16 +219,40 @@ class Cowboy {
 	}
 
 	shoot() {
-		//this.shootSound.stop();
+
+		//Don't fire if there's no ammo
+		if(this.ammo <= 0){
+			this.noAmmoSound.stop();
+			this.noAmmoSound.play();
+			return;
+		}
+
 		this.isShooting = true;
-		
+
+		this.frameNum = 2; //First frame number of the shoot animation
+
 		let bulletFwd = {};
 		bulletFwd.x = applyDeadzone(this.gamepad.axes[2], deadzone);
 		bulletFwd.y = applyDeadzone(this.gamepad.axes[3], deadzone);
 		let bulletClone = new bullet(this, bulletFwd);
 
-		this.shootSound.play();
 		AddBullet(bulletClone);
+		this.shootSound.play();
+
+		this.ammo--;
+
+		//Update revolver sprite
+		this.updateRevolver();
+
+	}
+
+	//Switches out revolver texture based on how much ammo is left.
+	updateRevolver() {
+		let textureRect = new PIXI.Rectangle(revolverDimension.x * (6 - this.ammo), 0, revolverDimension.x, revolverDimension.y);
+
+		this.revolver.texture = new PIXI.Texture(PIXI.loader.resources['revolver'].texture, textureRect);
+		
+		this.revolver.rotation = 0;
 	}
 
 	//Keeps the cowboy in the game's bounds

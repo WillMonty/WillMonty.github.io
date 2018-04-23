@@ -49,7 +49,7 @@ function searchAll() {
         return;
     }
 
-    let searchQuery = 'http://api.songkick.com/api/3.0/metro_areas/' + app.metroID + '/calendar.json?apikey=' + SONGKICK_KEY;
+    let searchQuery = 'https://api.songkick.com/api/3.0/metro_areas/' + app.metroID + '/calendar.json?apikey=' + SONGKICK_KEY;
 
     fetch(searchQuery)
         .then(response => {
@@ -69,7 +69,7 @@ function searchAll() {
 }
 
 function searchFilters() {
-    let artistQuery = 'http://api.songkick.com/api/3.0/search/artists.json?apikey=' + SONGKICK_KEY + '&query=' + this.artist;
+    let artistQuery = 'https://api.songkick.com/api/3.0/search/artists.json?apikey=' + SONGKICK_KEY + '&query=' + this.artist;
 
     fetch(artistQuery)
         .then(response => {
@@ -96,7 +96,7 @@ function makeMarkers(json) {
 
 
 function getMetroID() {
-    let metroQuery = 'http://api.songkick.com/api/3.0/search/locations.json?location=geo:' + userLocation.latitude + ',' + userLocation.longitude + '&apikey=' + SONGKICK_KEY;
+    let metroQuery = 'https://api.songkick.com/api/3.0/search/locations.json?location=geo:' + userLocation.latitude + ',' + userLocation.longitude + '&apikey=' + SONGKICK_KEY;
 
     fetch(metroQuery)
         .then(response => {

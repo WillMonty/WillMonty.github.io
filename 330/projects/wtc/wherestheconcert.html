@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Where's The Concert</title>
+		<meta name="viewport" content="initial-scale=1.0">
+		<meta charset="utf-8">
+		<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css"/>
+		<link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
+		<link type="text/css" rel="stylesheet" href="wtc.css"/>
+	</head>
+	<body>
+		<div id="root">
+			<div id='ui'>
+				<h2 id='title'>WTC!? Where's The Concert</h2>
+				<div id='controls'>
+					<b-button id='searchBtn' class='interact' size='lg' variant='success' @click='search' v-text="searchText"></b-button>
+					<b-alert id='searchAlert' variant="info" :show="searching">Searching...</b-alert>
+						<div id='filterContainer' class='interact'>
+							<b-btn id='collapseBtn' v-b-toggle="'filterCollapse'" @click="toggleFilters" variant="primary">Toggle Filters</b-btn>
+							<b-collapse id='filterCollapse' class="mt-2">
+								<b-card id='collapseCard'>
+									<input type="text" v-model.trim="filters.artist" placeholder="Artist">
+								</b-card>
+							</b-collapse>
+						</div>
+						<b-btn id='refreshLocationBtn' class='interact' @click="refreshLocation" variant="success">Refresh Location</b-btn>
+						<b-alert id='locationAlert' class='interact' variant="info" :show="dismissCountdown" @dismissed="dismissCountdown=0" v-text="locationText">
+						</b-alert>
+						</div>
+					<img id='sklogo' src="media/powered-by-songkick-pink.png">
+				</div>
+				<div id="map"></div>
+			</div>
+
+			<!-- Development Version of Vue -->
+			<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+			<script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+			<script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+			<script src="js/main.js"></script>
+			<script src="js/map.js"></script>
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASr0fzJ53yXxsR_pdqq9Y4WfcCNkEf77w&callback=initMap" async defer></script>
+			</body>
+		</html>

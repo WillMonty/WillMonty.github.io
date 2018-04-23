@@ -1,0 +1,76 @@
+html, body, #root {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#root
+{
+	position: relative;
+}
+
+#map 
+{
+	height: 100%;
+	z-index: 0;
+}
+
+.interact
+{
+	pointer-events: all;
+}
+
+#ui
+{
+	position: absolute;
+	pointer-events: none;
+	width: 100%;
+	height: 100%;
+	z-index: 100;
+}
+
+#title
+{
+	position: static;
+	text-align: center;
+}
+
+#controls > *
+{
+	margin-bottom: 1em;
+	margin-left: 1em;
+}
+
+#searchBtn
+{
+	margin-left: 0.8em;
+}
+
+
+#filterContainer > input
+{
+	display: block;
+}
+
+#collapseCard
+{
+	width: 35%;
+}
+
+#locationAlert, #searchAlert
+{
+	width: 10%;
+	margin-top: -0.5em;
+	padding: 5px;
+}
+
+#sklogo
+{
+	position: inherit;
+	bottom: 0;
+	width: 200px;
+	left: 50%; 
+	-webkit-transform: translate(-50%, 0); 
+
+}

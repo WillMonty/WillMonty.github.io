@@ -47,6 +47,9 @@ const app = new Vue({
 			this.eventsShown = 0;
 			this.searchAlertText = '';
 
+			//Clear markers
+			clearMarkers();
+
 			//Get rid of previous error text if it exists
 			this.displayingSearchError = false;
 			this.searchDismissCountdown = 0;
@@ -110,7 +113,6 @@ function searchAll() {
 		return response.json();
 	})
 		.then(json => {
-		clearMarkers();
 		let events = json.resultsPage.results.event;
 		for (let i = 0; i < events.length - 1; i++) {
 			addMarker(events[i]);
@@ -166,7 +168,6 @@ function searchFilters() {
 		return response.json();
 	})
 		.then(json => {
-		clearMarkers();
 		filterEvents(json);
 		app.searching=false;
 	})

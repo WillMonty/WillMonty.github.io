@@ -151,7 +151,7 @@ function searchFilters() {
 	else
 	{
 		//Artist search
-		searchQuery = 'http://api.songkick.com/api/3.0/artists/' + app.currentArtistID + '/calendar.json?apikey=' + SONGKICK_KEY;
+		searchQuery = 'https://api.songkick.com/api/3.0/artists/' + app.currentArtistID + '/calendar.json?apikey=' + SONGKICK_KEY;
 	}
 
 	fetch(searchQuery)

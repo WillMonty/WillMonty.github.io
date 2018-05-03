@@ -1,115 +1,224 @@
-//export {app};
-
-
+"use strict";
 const app = new Vue({
-    el: '#root',
-    data: {
-        searching: false,
-        filtersOn: false,
-        searchText: 'Search All Local Concerts',
-        locationText: '',
-        dismissTime: 3,
-        dismissCountdown: 0,
-        filters: { artist: '', genre: '', range: '', numResults: '' },
-        metroID: -1
-    },
-    methods: {
-        search() {
-            if (!this.filtersOn) {
-                searchAll();
-            } else {
-                searchFilters();
-            }
-        },
-        toggleFilters() {
-            //Not hooked up to v-model of the collapse since it toggles the bool *after* this method is called.
-            this.filtersOn = !this.filtersOn;
+	el: '#root',
+	data: {
+		metroID: -1,
+		searching: false,
+		filtersOn: false,
+		searchText: 'Search All Local Concerts',
 
-            if (this.filtersOn) {
-                this.searchText = 'Search With Filters';
-            } else {
-                this.searchText = 'Search All Local Concerts';
-            }
-        },
-        refreshLocation() {
-            getLocation();
-        }
+		eventsShown: 0,
+		eventsCap: 225,
+		page: 1,
 
-    }
+		displayingSearchError: false,
+		searchAlertText: '',
+		searchDismissTime: 3,
+		searchDismissCountdown: 0,
+
+		locationText: '',
+		locationVariant: 'success',
+		locDismissTime: 3,
+		locDismissCountdown: 0,
+
+		filters: {artist: '', range: null, type: null},
+
+		currentArtistID: -1,
+		lastArtistSearch: '',
+
+		rangeOptions: [
+			{ value: null, text: "Unlimited Range"},
+			{ value: 25, text: "25 miles"},
+			{ value: 50, text: "50 miles"},
+			{ value: 100, text: "100 miles"},
+			{ value: 250, text: "250 miles"},
+			{ value: 500, text: "500 miles"}
+		],
+		typeOptions: [
+			{value: null, text: "All Event Types"},
+			{value: "Concert", text: "Just Concerts"},
+			{value: "Festival", text: "Just Festivals"}
+		]
+	},
+	methods: {
+		search() {
+			//Reset search
+			this.page = 1;
+			this.eventsShown = 0;
+			this.searchAlertText = '';
+
+			//Get rid of previous error text if it exists
+			this.displayingSearchError = false;
+			this.searchDismissCountdown = 0;
+			if (!this.filtersOn) {
+				searchAll();
+			} else {
+				if(this.filters.artist != '' && this.filters.artist != this.lastArtistSearch)
+					searchArtist();
+				else
+					searchFilters();
+			}
+		},
+		toggleFilters() {
+			//Not hooked up to v-model of the collapse since it toggles the bool *after* this method is called.
+			this.filtersOn = !this.filtersOn;
+
+			if (this.filtersOn) {
+				this.searchText = 'Search With Filters';
+			} else {
+				//Clear filters
+				this.currentArtistID = -1;
+				this.lastArtistSearch = '';
+				this.searchText = 'Search All Local Concerts';
+			}
+		},
+		refreshLocation() {
+			getLocation();
+		}
+
+	},
+	components:{
+		'input-filter':inputFilter,
+		'select-filter': selectFilter
+	}
 });
 
 const SONGKICK_KEY = 'D76VyKgAzIw0KqaB';
 
 function searchAll() {
-    app.searching = true;
-    //If the metroID hasn't been found yet get it and wait for it to be found
-    //TODO: store this value in webstorage
-    if (app.metroID == -1) {
-        getMetroID();
-        return;
-    }
+	//Set the metro id if it hasn't been already
+	if(!hasMetroID())
+	{
+		getMetroID(true); //Search after the ID has been found
+		return; //Don't search until its found
+	}
 
-    let searchQuery = 'https://api.songkick.com/api/3.0/metro_areas/' + app.metroID + '/calendar.json?apikey=' + SONGKICK_KEY;
+	app.searching = true;
 
-    fetch(searchQuery)
-        .then(response => {
-            if (!response.ok) {
-                throw Error(`ERROR: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(json => {
+	let searchQuery = 'https://api.songkick.com/api/3.0/metro_areas/' + app.metroID + '/calendar.json?apikey=' + SONGKICK_KEY + '&page=' + app.page;
 
-            console.log(json);
-            clearMarkers();
-            makeMarkers(json);
-            app.searching = false;
+	fetch(searchQuery)
+		.then(response => {
+		if (!response.ok) {
+			if(!app.displayingSearchError)
+			{
+				app.searchAlertText = "Search All Error: ";
+				displaySearchError(response.statusText);
+			}
+			throw Error(`ERROR: ${response.statusText}`);
+		}
+		return response.json();
+	})
+		.then(json => {
+		clearMarkers();
+		let events = json.resultsPage.results.event;
+		for (let i = 0; i < events.length - 1; i++) {
+			addMarker(events[i]);
 
-        })
+		}
+
+		//Check if another page of results is warranted
+		if(app.eventsShown < app.eventsCap && json.resultsPage.totalEntries > app.page * json.resultsPage.perPage)
+		{
+			app.page++;
+			searchAll();
+		}
+		app.searching = false;
+
+	})
 }
 
 function searchFilters() {
-    let artistQuery = 'https://api.songkick.com/api/3.0/search/artists.json?apikey=' + SONGKICK_KEY + '&query=' + this.artist;
+	//Set the metro id if it hasn't been already
+	if(!hasMetroID())
+	{
+		getMetroID(true); //Search after the ID has been found
+		return;
+	}
 
-    fetch(artistQuery)
-        .then(response => {
-            if (!response.ok) {
-                throw Error(`ERROR: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(json => {
+	app.searching = true;
 
-            console.log(json);
+	let searchQuery = "";
 
-        })
+	//Whether to bother searching by artist or not
+	if(app.filters.artist == '')
+	{
+		//Normal Search
+		searchQuery = 'https://api.songkick.com/api/3.0/metro_areas/' + app.metroID + '/calendar.json?apikey=' + SONGKICK_KEY;
+	}
+	else
+	{
+		//Artist search
+		searchQuery = 'http://api.songkick.com/api/3.0/artists/' + app.currentArtistID + '/calendar.json?apikey=' + SONGKICK_KEY;
+	}
+
+	fetch(searchQuery)
+		.then(response => {
+		if (!response.ok) {
+
+			if(!app.displayingSearchError)
+			{
+				app.searchAlertText = "Filtered Sarch Error: ";
+				displaySearchError(response.statusText);
+			}
+			throw Error(`ERROR: ${response.statusText}`);
+		}
+		return response.json();
+	})
+		.then(json => {
+		clearMarkers();
+		filterEvents(json);
+		app.searching=false;
+	})
 }
 
-function makeMarkers(json) {
-    let events = json.resultsPage.results.event;
-    console.log(events);
-    for (let i = 0; i < events.length - 1; i++) {
-        addMarker(events[i]);
+//Filter down events by user chosen filters before adding them to the map
+function filterEvents(json) {
 
-    }
-}
+	let events = json.resultsPage.results.event;
+	let eventAdded = false;
 
+	if(!events)
+	{
+		//Show error if no events return with these filters
+		if(!app.displayingSearchError)
+			displaySearchError("No events match these filters.");
+		return;
+	}
 
-function getMetroID() {
-    let metroQuery = 'https://api.songkick.com/api/3.0/search/locations.json?location=geo:' + userLocation.latitude + ',' + userLocation.longitude + '&apikey=' + SONGKICK_KEY;
+	for (let i = 0; i < events.length - 1; i++) 
+	{
+		//Use "continue" to kick back to the top of the loop when an event is filtered out
 
-    fetch(metroQuery)
-        .then(response => {
-            if (!response.ok) {
-                throw Error(`ERROR: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(json => {
+		//Check range
+		if(app.filters.range != null)
+		{
+			if(getDistance(events[i].location) >= app.filters.range)
+				continue;
+		}
 
-            app.metroID = json.resultsPage.results.location[0].metroArea.id;
+		//Check event type
+		if(app.filters.type != null)
+		{
+			if(app.filters.type != events[i].type)
+				continue;
+		}
 
-            //Bounce back to the search now that the metro id has been found
-            searchAll();
-        })
+		//If all the filters have been worked through, add this event
+		addMarker(events[i]);
+		eventAdded = true;
+	}
+
+	if(!eventAdded)
+	{
+		//Check if another page of results is warranted
+		if(app.eventsShown < app.eventsCap && json.resultsPage.totalEntries > app.page * json.resultsPage.perPage)
+		{
+			app.page++;
+			searchFilters();
+		}
+		//Show error if no events exist after filtering
+		if(!app.displayingSearchError)
+			displaySearchError("No events match these filters.");
+	}
 }

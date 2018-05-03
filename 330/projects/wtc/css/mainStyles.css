@@ -34,6 +34,14 @@ html, body, #root {
 {
 	position: static;
 	text-align: center;
+	color: #007bff;
+	font-family: roboto;
+	font-weight: bold;
+}
+
+#wtc
+{
+	color: #f80046;
 }
 
 #controls > *
@@ -42,20 +50,31 @@ html, body, #root {
 	margin-left: 1em;
 }
 
+.btn-success
+{
+	background-color: #f80046;
+	border-color: #f80046;
+}
+
 #searchBtn
 {
 	margin-left: 0.8em;
 }
 
+#filterContainer
+{
+	width: 18em;
+}
 
 #filterContainer > input
 {
 	display: block;
 }
 
-#collapseCard
+.filter
 {
-	width: 35%;
+	margin-bottom: 1em;
+	width: 100%;
 }
 
 #locationAlert, #searchAlert

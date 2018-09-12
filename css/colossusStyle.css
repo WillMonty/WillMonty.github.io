@@ -1,0 +1,173 @@
+body
+{
+	margin-bottom: 2em;
+}
+
+#vidContainer
+{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+iframe
+{
+	border: 3px solid black;
+	width: 610px;
+	height: 465px;
+}
+
+@media only screen and (min-width: 300px) and (max-width: 768px)
+{
+	#title
+	{
+		font-size: 1.1em;
+	}
+
+	.typed-cursor
+	{
+		font-size: 1.1em;   
+	}
+
+	#vidContainer
+	{
+	}
+
+	iframe
+	{
+		width: 305px;
+		height: 158px;
+	}
+
+	#mainText
+	{
+		font-size: 1.2em;
+	}
+
+	#docText
+	{
+		font-size: 12pt;
+	}
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1290px)
+{
+	iframe
+	{
+		width: 305px;
+		height: 228px;
+	}
+}
+
+.carousel-inner > .item
+{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	margin-top: auto;
+}
+
+video
+{
+	width: 43em;
+	height: 25em;
+}
+
+#myCarousel
+{
+	height: 25em;
+	margin-bottom: 1em;
+}
+
+.carousel-indicators li.active,
+.carousel-indicators li { border: 0; }
+
+.carousel-indicators li {
+	background: #666;
+	margin-top: 2em;
+	margin: 0 3px;
+	width: 12px;
+	height: 12px;
+}
+
+.carousel-indicators li.active {
+	background: #fff;
+	margin: 0 3px;
+}
+
+.about
+{
+	padding-left: 2em;
+	font-size: 1.4em;
+	width: 70%;
+	margin-top: 1em;
+}
+
+
+@media only screen and (min-width: 300px) and (max-width: 750px)
+{
+	video
+	{
+		width: 16em;
+		height: 10em;
+	}  
+
+	#myCarousel
+	{
+		height: 10em;
+	}
+
+	.carousel-control
+	{
+		width: 5%;
+
+		text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
+		filter: alpha(opacity=100);
+		opacity: 1;
+	}
+
+	.carousel-control.left, .carousel-control.right
+	{
+		background-image: none;
+	}
+
+	.mainText
+	{
+		margin-left: auto;
+		margin-right: auto;
+		width: 100%;
+	}
+}
+
+@media only screen and (min-width: 751px) and (max-width: 1125px)
+{
+	video
+	{
+		width: 40em;
+		height: 27em;
+	}
+
+	#myCarousel
+	{
+		height: 30em;
+	}
+
+	.carousel-control
+	{
+		width: 10%;
+	}
+}
+
+@media only screen and (min-width: 1126px) and (max-width: 1920px)
+{
+	video
+	{
+		width: 60em;
+		height: 38em;
+	}
+
+	#myCarousel
+	{
+		height: 40em;
+	}
+}

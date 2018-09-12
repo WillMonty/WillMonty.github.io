@@ -62,29 +62,16 @@
 	background-size: cover;
 }
 
-
-#visProj
+#colossus
 {
-	background: url("../media/gifs/visualizerProjectStill.jpg");
-	background-size: cover;
-}
-
-#visProj:hover
-{
-	background: url("../media/gifs/visualizerProject.gif");
-	background-size: cover;
-}
-
-#visualizer
-{
-	background: url("../media/gifs/R2Still.jpg");
+	//background: url("../media/gifs/R2Still.jpg");
 	background-size: cover;
 	background-position: center;
 }
 
-#visualizer:hover
+#colossus:hover
 {
-	background: url("../media/gifs/R2.gif");
+	//background: url("../media/gifs/R2.gif");
 	background-size: cover;
 	background-position: center;
 }

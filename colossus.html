@@ -1,0 +1,131 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<title>WM Project Colossus</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="shortcut icon" type="image/x-icon" href="media/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+
+		<script src="js/jquery-3.1.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+		<script src="bootstrap/js/bootstrap.js"></script>
+		<script src="js/typed.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" href="css/colossusStyle.css">
+
+	</head>
+	<body>
+		<nav class="navbar">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navCollapse" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="index.html"></a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="navCollapse">
+					<ul class="nav navbar-nav">
+						<li><a href="colossus.html">Project Colossus</a></li>
+						<li><a href="gameengine.html">3D Game Engine</a></li>
+						<li><a href="babe.html">Bar Ain't Big Enough</a></li>
+						<li><a href="media/William%20G%20Montgomery%20Resum%C3%A9.pdf">Resum&eacute;</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<h2 id="title" class="themeText"></h2>
+
+		<div class="themeText mainText">
+			The videos below show in game footage as well as a video of our showcase at Imagine RIT. The project was also featured in an <a href="http://www.rit.edu/news/story.php?id=66516&source=enewsletter">RIT University news article during development.</a>
+			<br>
+			<br>
+		</div>
+		<div class="container-fluid">
+
+			<div id="myCarousel" class="carousel slide">
+
+				<!-- Indicators -->
+				<ol class="carousel-indicators">
+					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+					<li data-target="#myCarousel" data-slide-to="1"></li>
+					<li data-target="#myCarousel" data-slide-to="2"></li>
+				</ol>
+
+				<!-- Wrapper for slides -->
+				<div class="carousel-inner" role="listbox">
+					<div class="item active">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/VR%20Perspective.mp4" type="video/mp4">
+						</video>
+					</div>
+
+					<div class="item">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/Resistance%20Perspective.mp4" type="video/mp4">
+						</video>
+					</div>
+
+					<div class="item">
+						<video width="480" height="320" controls="controls">
+							<source src="media/Video/Imagine.mp4" type="video/mp4">
+						</video>
+					</div>
+				</div>
+
+				<!-- Left and right controls -->
+				<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev" onclick='pauseAll()'>
+					<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+					<span class="sr-only">Previous</span>
+				</a>
+				<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next" onclick='pauseAll()'>
+					<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+					<span class="sr-only">Next</span>
+				</a>
+			</div>
+			<div class="themeText mainText">
+				About the Game:
+			</div>
+			<div class="themeText about">
+				Project Colossus is a local multiplayer VR game made with Unity and SteamVR for the Vive. I created the current experience with a student team in 15 weeks. I stood as lead VR developer, implementing the robot "colossus" character and its abilities. I also created all of the sound effects from scratch.
+			</div>
+			<div class="themeText about">
+				Using the Vive, one player becomes the giant "Colossus" and attempts to kill the other two players before the robot is destroyed. Using controllers, the other two players play as "Resistance" soldiers trying to defeat the Colossus without being eliminated.
+			</div>
+			<div class="themeText about">
+				Currently, we are working on adding abilities to both Resistance and Colossus. We also want to redo our lighting and map balance as well as re-balance current abilities. New and improved audio feedback will also be worked on to make the experience more immersive.
+			</div>
+		</div>
+
+	</body>
+
+	<script type="text/javascript">
+		var vidArray;
+		$(document).ready(function() 
+						  {
+			$("#title").typed({
+				strings: ["Project Colossus VR (Ongoing Project)"],
+				typeSpeed: 0.2
+			});
+
+			vidArray = document.getElementsByTagName("video");
+			vidArray = Array.from(vidArray);
+		});
+
+		function pauseAll()
+		{
+			vidArray.forEach(function(element) {
+				element.pause();
+			});
+		}
+
+		$('.carousel').carousel({
+			interval: false
+		}); 
+	</script>
+</html>

@@ -64,14 +64,14 @@
 
 #colossus
 {
-	//background: url("../media/gifs/R2Still.jpg");
+	background: url("../media/gifs/colossusStill.jpg");
 	background-size: cover;
 	background-position: center;
 }
 
 #colossus:hover
 {
-	//background: url("../media/gifs/R2.gif");
+	background: url("../media/gifs/colossus.gif");
 	background-size: cover;
 	background-position: center;
 }

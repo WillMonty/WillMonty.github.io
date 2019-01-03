@@ -22,14 +22,15 @@ body
 		font-size: 1.1em;   
 	}
 
-	#vidContainer
+	#myCarousel
 	{
+        
 	}
 
 	iframe
 	{
 		width: 305px;
-		height: 158px;
+		height: 108px;
 	}
 
 	#mainText
@@ -47,8 +48,8 @@ body
 {
 	iframe
 	{
-		width: 305px;
-		height: 228px;
+		width: 505px;
+		height: 358px;
 	}
 }
 

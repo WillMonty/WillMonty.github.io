@@ -38,28 +38,17 @@
 
 .hoverGif
 {
-	width: 28em;
-	height: 28em;
+	width: 30em;
+	height: 30em;
 	border: 3px solid black;
 	margin-left: auto;
 	margin-right: auto;
+	margin-bottom: 2em;
 }
 
 .hoverGif:hover
 {
 	cursor: pointer;
-}
-
-#engine
-{
-	background: url("../media/gifs/engineStill.jpg");
-	background-size: cover;
-}
-
-#engine:hover
-{
-	background: url("../media/gifs/engine.gif");
-	background-size: cover;
 }
 
 #colossus
@@ -74,6 +63,33 @@
 	background: url("../media/gifs/colossus.gif");
 	background-size: cover;
 	background-position: center;
+}
+
+#composing
+{
+	background: url("../media/gifs/containStill.jpg");
+	background-size: cover;
+	background-position: center;
+}
+
+#composing:hover
+{
+	background: url("../media/gifs/contain.gif");
+	background-size: cover;
+	background-position: center;
+}
+
+
+#engine
+{
+	background: url("../media/gifs/engineStill.jpg");
+	background-size: cover;
+}
+
+#engine:hover
+{
+	background: url("../media/gifs/engine.gif");
+	background-size: cover;
 }
 
 #babe

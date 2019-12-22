@@ -93,14 +93,14 @@
 
 #overdrive
 {
-	background: url("../media/overdrive_art.png");
+	background: url("../media/gifs/overdriveStill.jpg");
 	background-size: cover;
 	background-position: center;
 }
 
 #overdrive:hover
 {
-	background: url("../media/overdrive_art.png");
+	background: url("../media/gifs/overdrive.gif");
 	background-size: cover;
 	background-position: center;
 }

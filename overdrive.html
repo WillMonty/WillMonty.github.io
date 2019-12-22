@@ -2,7 +2,7 @@
 
 <html lang="en">
 	<head>
-		<title>WM Game Engine</title>
+		<title>WM Overdrive</title>
 		<link rel="shortcut icon" type="image/x-icon" href="media/favicon.ico">
 		<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -11,7 +11,7 @@
 		<script src="bootstrap/js/bootstrap.js"></script>
 		<script src="js/typed.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
-		<link rel="stylesheet" type="text/css" href="css/gameengineStyle.css">
+		<link rel="stylesheet" type="text/css" href="css/overdriveStyle.css">
 	</head>
 
 	<body>
@@ -45,20 +45,11 @@
 			<div class="container-fluid">
 				<div class="row well">
 					<div class="col-sm-6 col-xs-12" id="vidContainer">
-						<video width="480" height="320" controls="controls">
-							<source src="media/Video/Game%20Engine%20Video.mp4" type="video/mp4">
-						</video>
+						<img src="media/overdrive_download_today_gif.gif"/>
 					</div>
 					<div class="col-sm-6 col-xs-12">
-						<p class="themeText mainText">I created a 3D Game Engine using C++, OpenGL, and GLFW. The engine can load .obj files and textures, compile my shaders, and can easily have different games written on top of it.<br> It also includes basic physics with object Transforms as well as collision detection.</p>	
-						<a id="dropBtn" class="btn themeText" data-toggle="collapse" href="#collapseDiv" aria-expanded="false" aria-controls="collapseExample">
-							About the Game &#9660;
-						</a>
-						<div class="collapse" id="collapseDiv">
-							<div class="themeText" id="dropText">
-								The game consists of players hitting as many targets as they can in a minute. The target will switch to different positions and occasionally bounce around the backboard. The player can also adjust the backboard's distance to make it easier or harder. When the game is over the final score is shown.
-							</div>
-						</div>
+						<p class="themeText mainText">I created three tracks and eight original SFX for <a href="https://overdrivegame.com/">OverDrive</a>, a rhythm game themed around taking a joyride down retro neon Miami.</p>
+						<p class="themeText mainText"> You can download the game now for both <a href="https://apps.apple.com/us/app/overdrive-synthwave-racer/id1485747802?ls=1">iOS</a> and <a href="https://play.google.com/store/apps/details?id=com.SynthLabs.Overdrive">Android</a>.
 					</div>
 				</div>
 			</div>
@@ -70,7 +61,7 @@
 		$(document).ready(function() 
 						  {
 			$("#title").typed({
-				strings: ["3D Game Engine"],
+				strings: ["OverDrive Rhythm Game"],
 				typeSpeed: 0.2
 			});
 		});

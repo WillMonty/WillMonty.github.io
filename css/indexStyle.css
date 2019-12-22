@@ -2,7 +2,6 @@
 {
 	display:block;
 	margin: auto;
-	width: 220px;
 	height: 259px;
 }
 
@@ -92,16 +91,16 @@
 	background-size: cover;
 }
 
-#babe
+#overdrive
 {
-	background: url("../media/gifs/babeStill.jpg");
+	background: url("../media/overdrive_art.png");
 	background-size: cover;
 	background-position: center;
 }
 
-#babe:hover
+#overdrive:hover
 {
-	background: url("../media/gifs/babe.gif");
+	background: url("../media/overdrive_art.png");
 	background-size: cover;
 	background-position: center;
 }
